@@ -67,7 +67,11 @@ function showConfirmModal(target) {
         div.remove();
     });
     div.querySelector("#confirm-delete-btn").addEventListener('click', function () {
-        target.parentElement.remove();
+        // target.parentElement.remove();
+        target.parentElement.classList.add("animate-deleted-card");
+        setTimeout(() => {
+            target.parentElement.remove();
+        }, 1400);
         div.remove();
 
         if (todoListBody.childElementCount == 0) {
