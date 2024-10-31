@@ -1,9 +1,18 @@
 const addTaskBtn = document.querySelector('#add-task');
-const taskAddingModal = document.querySelector('#tasks-adding-modal');
-const closeModalBtn = document.querySelector('#close-modal');
+
+// Lists
+
 const todoListBody = document.querySelector('.todo-list-body');
 const doingListBody = document.querySelector('.doing-list-body');
 const doneListBody = document.querySelector('.done-list-body');
+const todoTotalTasks = document.querySelector('#todo-total-tasks');
+const doingTotalTasks = document.querySelector('#doing-total-tasks');
+const doneTotalTasks = document.querySelector('#done-total-tasks');
+
+// Add Task
+
+const taskAddingModal = document.querySelector('#tasks-adding-modal');
+const closeAddModalBtn = document.querySelector('#close-add-modal');
 const addAnotherTaskBtn = taskAddingModal.querySelector('#add-another-task-btn');
 const addTaskTitle = taskAddingModal.querySelector('#add-task-title');
 const addTaskDescription = taskAddingModal.querySelector('#add-task-description');
@@ -12,9 +21,20 @@ const addDueDate = taskAddingModal.querySelector('#add-due-date');
 const addToList = taskAddingModal.querySelector('#add-to-list');
 const addTasksPreviewList = taskAddingModal.querySelector('#add-tasks-preview-list');
 const saveAddBtn = taskAddingModal.querySelector('#save-add');
-const todoTotalTasks = document.querySelector('#todo-total-tasks');
-const doingTotalTasks = document.querySelector('#doing-total-tasks');
-const doneTotalTasks = document.querySelector('#done-total-tasks');
+
+// Modify Task
+
+const taskModifyingModal = document.querySelector("#tasks-modifying-modal");
+const modifyTaskTitle = document.querySelector("#modify-task-title");
+const modifyTaskDescription = document.querySelector("#modify-task-description");
+const modifyPriority = document.querySelector("#modify-priority");
+const modifyDueDate = document.querySelector("#modify-due-date");
+const modifyToList = document.querySelector("#modify-to-list");
+const saveModifyBtn = taskModifyingModal.querySelector('#save-modify');
+const closeModifyModal = taskModifyingModal.querySelector('#close-modify-modal');
+
+// Filter
+
 const filterPriority = document.querySelector('#filter-priority');
 const searchInput = document.querySelector('#search-input');
 const searchBtn = document.querySelector('#search-btn');
@@ -30,7 +50,7 @@ addTaskBtn.addEventListener('click', function () {
     window.addEventListener('click', closeModalOutside);
 });
 
-closeModalBtn.addEventListener('click', closeModalAdd);
+closeAddModalBtn.addEventListener('click', closeModalAdd);
 
 function closeModalAdd() {
     if (addTasksPreviewList.childElementCount > 1) {
@@ -151,7 +171,7 @@ addAnotherTaskBtn.addEventListener('click', function () {
 
     let errorExist = false;
 
-    if (addTaskTitle.value.trim().length < 3) {
+    if (addTaskTitle.value.trim().length < 1) {
         addTaskTitle.classList.add("placeholder:text-red-500");
         errorExist = true;
     } else {
@@ -282,7 +302,9 @@ saveAddBtn.addEventListener("click", function () {
             doneTotalTasks.textContent = doneCount;
         }
     }
-    // clearData();
+    clearData();
+    taskModifyingModal.classList.remove("flex");
+    taskModifyingModal.classList.add("hidden");
 });
 
 ///////////////////////////////////////////////
@@ -329,3 +351,101 @@ function filterTasks() {
         }
     }
 }
+
+/////////////////////////////////////////
+/// Modify Task
+/////////////////////////////////////////
+
+let modifyTask = null;
+
+for (let item of todoListBody.children) {
+    item.addEventListener('click', openModifyModal);
+}
+for (let item of doingListBody.children) {
+    item.addEventListener('click', openModifyModal);
+}
+for (let item of doneListBody.children) {
+    item.addEventListener('click', openModifyModal);
+}
+
+saveModifyBtn.addEventListener("click", function () {
+    const priority = modifyTask.querySelector(".task-priority");
+
+    modifyTask.querySelector("h3").textContent = modifyTaskTitle.value;
+    modifyTask.querySelector("p").textContent = modifyTaskDescription.value;
+
+    // Change Priority
+
+    priority.textContent = modifyPriority.value;
+    priority.classList.remove('bg-red-500');
+    priority.classList.remove('bg-lime-500');
+    priority.classList.remove('bg-yellow-500');
+    modifyTask.classList.remove('border-red-500');
+    modifyTask.classList.remove('border-lime-500');
+    modifyTask.classList.remove('border-yellow-500');
+    if (modifyPriority.value == "P3") {
+        priority.classList.add('bg-lime-500');
+        modifyTask.classList.add("border-lime-500");
+    } else if (modifyPriority.value == "P2") {
+        priority.classList.add('bg-yellow-500');
+        modifyTask.classList.add("border-yellow-500");
+    } else {
+        priority.classList.add('bg-red-500');
+        modifyTask.classList.add("border-red-500");
+    }
+
+    // Hide Modal
+
+    taskModifyingModal.classList.remove("flex");
+    taskModifyingModal.classList.add("hidden");
+
+    // Change List
+
+    if (modifyToList.value == "ToDo") {
+        changeTaskList(todoListBody, modifyTask);
+    } else if (modifyToList.value == "Doing") {
+        changeTaskList(doingListBody, modifyTask);
+    } else {
+        changeTaskList(doneListBody, modifyTask);
+    }
+    // modifyToList.value = item.parentElement.dataset.list;
+    modifyTask = null;
+});
+
+function changeTaskList(listBody, modifyTask) {
+    if (listBody.firstElementChild.tagName != "DIV") {
+        listBody.innerHTML = "";
+        listBody.append(modifyTask);
+    } else {
+        listBody.firstElementChild.before(modifyTask);
+    }
+}
+
+function updateStatistiques() {
+
+}
+
+function openModifyModal(e) {
+    const button = this.querySelector('button');
+
+    // Check if the clicked element is the button or a child of the button
+    if (button && (e.target === button || button.contains(e.target))) {
+        return;
+    }
+
+    taskModifyingModal.classList.remove("hidden");
+    taskModifyingModal.classList.add("flex");
+
+    modifyTaskTitle.value = this.querySelector("h3").textContent;
+    modifyTaskDescription.value = this.querySelector("p").textContent;
+    modifyPriority.value = this.querySelector(".task-priority").textContent;
+    // modifyDueDate.value = ;
+    modifyToList.value = this.parentElement.dataset.list;
+
+    modifyTask = this;
+}
+
+closeModifyModal.addEventListener('click', function () {
+    taskModifyingModal.classList.add('hidden');
+    taskModifyingModal.classList.add('flex');
+});
