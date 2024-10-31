@@ -449,3 +449,81 @@ closeModifyModal.addEventListener('click', function () {
     taskModifyingModal.classList.add('hidden');
     taskModifyingModal.classList.add('flex');
 });
+
+/////////////////////////////////////////////
+/// Drag and Drop
+/////////////////////////////////////////////
+
+let draggedItem = null;
+
+for (let item of doingListBody.children) {
+    item.addEventListener("dragstart", function () {
+        draggedItem = item;
+        item.classList.add("opacity-70", "border-2", "border-blue-500", "border-dashed", "blur-[1px]");
+        item.classList.remove("hover:bg-slate-200", "border-l-4");
+    });
+    
+    item.addEventListener("dragend", function (e) {
+        item.classList.remove("opacity-70", "border-2", "border-blue-500", "border-dashed", "blur-[1px]");
+        item.classList.add("hover:bg-slate-200", "border-l-4");
+
+        doneListBody.classList.remove("border", "border-red-500");
+        doneListBody.classList.add("border-gray-300");
+    });
+    // todoListBody.addEventListener("dragover", function (e) {
+    //     e.preventDefault();
+    // });
+    // todoListBody.addEventListener("drop", function (e) {
+    //     if (todoListBody.firstElementChild.tagName != "DIV") {
+    //         todoListBody.firstElementChild.remove();
+    //         todoListBody.append(target);
+    //     } else {
+    //         todoListBody.firstElementChild.before(target);
+    //     }
+    // });
+
+}
+
+doneListBody.addEventListener("dragover", function (e) {
+    this.classList.add("border", "border-blue-500");
+    this.classList.remove("border-gray-300");
+    e.preventDefault();
+});
+
+doneListBody.addEventListener("dragleave", function (e) {
+    doneListBody.classList.remove("border", "border-blue-500");
+    doneListBody.classList.add("border-gray-300");
+});
+
+doneListBody.addEventListener("drop", function (e) {
+    if (doneListBody.firstElementChild.tagName != "DIV") {
+        doneListBody.innerHTML = "";
+        doneListBody.append(draggedItem);
+    } else {
+        doneListBody.firstElementChild.before(draggedItem);
+    }
+    draggedItem = null;
+});
+
+todoListBody.addEventListener("dragover", function (e) {
+    this.classList.add("border", "border-blue-500");
+    this.classList.remove("border-gray-300");
+    e.preventDefault();
+});
+
+todoListBody.addEventListener("dragleave", function (e) {
+    todoListBody.classList.remove("border", "border-blue-500");
+    todoListBody.classList.add("border-gray-300");
+});
+
+todoListBody.addEventListener("drop", function (e) {
+    todoListBody.classList.remove("border", "border-blue-500");
+    todoListBody.classList.add("border-gray-300");
+    if (todoListBody.firstElementChild.tagName != "DIV") {
+        todoListBody.innerHTML = "";
+        todoListBody.append(draggedItem);
+    } else {
+        todoListBody.firstElementChild.before(draggedItem);
+    }
+    draggedItem = null;
+});
