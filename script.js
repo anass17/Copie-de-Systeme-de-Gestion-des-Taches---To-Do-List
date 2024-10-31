@@ -40,9 +40,8 @@ const searchInput = document.querySelector('#search-input');
 const searchBtn = document.querySelector('#search-btn');
 
 const addTasksArray = [];
-let toDoCount = 1;
-let doingCount = 4;
-let doneCount = 0;
+
+updateStatistiques();
 
 addTaskBtn.addEventListener('click', function () {
     taskAddingModal.classList.remove('hidden');
@@ -147,6 +146,7 @@ function showConfirmModal(target) {
                 para.textContent = "This list is empty, add or move a card here to be shown.";
                 doneListBody.append(para)
             }
+            updateStatistiques();
         }, 950);
         div.remove();
 
@@ -294,13 +294,9 @@ saveAddBtn.addEventListener("click", function () {
         } else if (item.list == "Doing") {
             doingListBody.append(task);
         } else {
-            if (doneCount == 0) {
-                doneListBody.innerHTML = "";
-            }
             doneListBody.append(task);
-            doneCount++;
-            doneTotalTasks.textContent = doneCount;
         }
+        updateStatistiques();
     }
     clearData();
     taskModifyingModal.classList.remove("flex");
@@ -419,11 +415,10 @@ function changeTaskList(listBody, modifyTask) {
     } else {
         listBody.firstElementChild.before(modifyTask);
     }
+    updateStatistiques();
 }
 
-function updateStatistiques() {
 
-}
 
 function openModifyModal(e) {
     const button = this.querySelector('button');
@@ -496,12 +491,15 @@ doneListBody.addEventListener("dragleave", function (e) {
 });
 
 doneListBody.addEventListener("drop", function (e) {
+    doneListBody.classList.remove("border", "border-blue-500");
+    doneListBody.classList.add("border-gray-300");
     if (doneListBody.firstElementChild.tagName != "DIV") {
         doneListBody.innerHTML = "";
         doneListBody.append(draggedItem);
     } else {
         doneListBody.firstElementChild.before(draggedItem);
     }
+    updateStatistiques();
     draggedItem = null;
 });
 
@@ -525,5 +523,35 @@ todoListBody.addEventListener("drop", function (e) {
     } else {
         todoListBody.firstElementChild.before(draggedItem);
     }
+    updateStatistiques();
     draggedItem = null;
 });
+
+////////////////////////////////////////
+/// Update Statistics
+////////////////////////////////////////
+
+function updateStatistiques() {
+    
+    if (todoListBody.childElementCount == 0 || todoListBody.firstElementChild.tagName == 'P') {
+        todoTotalTasks.textContent = 0;
+        todoListBody.innerHTML = `<p class="text-center text-gray-500 pt-6 px-7">This list is empty, add or move a card here to be shown.</p>`;
+    } else {
+        todoTotalTasks.textContent = todoListBody.childElementCount;
+    }
+
+    if (doingListBody.childElementCount == 0 || doingListBody.firstElementChild.tagName == 'P') {
+        doingTotalTasks.textContent = 0;
+        doingListBody.innerHTML = `<p class="text-center text-gray-500 pt-6 px-7">This list is empty, add or move a card here to be shown.</p>`;
+    } else {
+        doingTotalTasks.textContent = doingListBody.childElementCount;
+    }
+
+    if (doneTotalTasks.childElementCount == 0 || doneTotalTasks.firstElementChild.tagName == 'P') {
+        doneTotalTasks.textContent = 0;
+        doneListBody.innerHTML = `<p class="text-center text-gray-500 pt-6 px-7">This list is empty, add or move a card here to be shown.</p>`;
+    } else {
+        doneTotalTasks.textContent = doneTotalTasks.childElementCount;
+    }
+
+}
