@@ -26,7 +26,7 @@
     
     
     <div class="flex gap-4 mt-3">
-      <div>
+      <div class="w-24">
         <label for="filter-priority" class="block mb-2 text-sm font-medium text-gray-900">Priority</label>
         <select id="filter-priority" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
           <option selected value="">All</option>
@@ -62,7 +62,7 @@
 
       <!-- List Body -->
 
-      <div class="h-96 p-4 overflow-y-auto bg-gray-100 todo-list-body">
+      <div data-list="ToDo" class="h-96 p-4 overflow-y-auto bg-gray-100 todo-list-body">
 
         <!-- Task -->
         
@@ -104,7 +104,7 @@
 
       <!-- List Body -->
 
-      <div class="h-96 p-4 overflow-y-auto bg-gray-100 doing-list-body">
+      <div data-list="Doing" class="h-96 p-4 overflow-y-auto bg-gray-100 doing-list-body">
 
         <!-- Task -->
 
@@ -209,7 +209,7 @@
 
       <!-- List Body -->
 
-      <div class="h-96 p-4 overflow-y-auto bg-gray-100 done-list-body">
+      <div data-list="Doing" class="h-96 p-4 overflow-y-auto bg-gray-100 done-list-body">
         <p class="text-center text-gray-500 pt-6 px-7">This list is empty, add or move a card here to be shown.</p>
       </div>
 
@@ -240,7 +240,7 @@
       
       <div class="h-16 flex items-center px-7 justify-between border-b border-gray-300">
         <h2 class="font-semibold text-lg">Add a Task</h2>
-        <button role="button" class="font-bold text-lg text-red-500" id="close-modal">X</button>
+        <button role="button" class="font-bold text-lg text-red-500" id="close-add-modal">X</button>
       </div>
       
       <!-- Modal body -->
@@ -287,10 +287,71 @@
         </form>
       </div>
 
-      <!-- Modal Header -->
+      <!-- Modal Footer -->
       
       <div class="h-16 flex items-start px-7">
         <button role="button" id="save-add" class="px-5 py-2 rounded bg-blue-600 text-gray-50">Save</button>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- Modal: Modify Tasks -->
+
+  <div id="tasks-modifying-modal" class="hidden bg w-full h-screen fixed top-0 left-0 bg-opacity-60 bg-gray-900 justify-center items-center">
+    <div class="bg-white rounded-xl w-2/5 h-5/6 shadow-lg border border-gray-500 flex flex-col justify-between">
+    
+      <!-- Modal Header -->
+      
+      <div class="h-16 flex items-center px-7 justify-between border-b border-gray-300">
+        <h2 class="font-semibold text-lg">Modify a Task</h2>
+        <button role="button" class="font-bold text-lg text-red-500" id="close-modify-modal">X</button>
+      </div>
+      
+      <!-- Modal body -->
+
+      <div class="py-4 px-10">
+        <form action="">
+          <div>
+            <label for="modify-task-title" class="sr-only">Task Title</label>
+            <textarea name="" id="modify-task-title" placeholder="Add a title ..." class="resize-none w-full text-center h-16 focus:outline-none text-lg font-bold"></textarea>
+          </div>
+          <div>
+            <label for="modify-task-description" class="sr-only">Task Description</label>
+            <textarea name="" id="modify-task-description" placeholder="Add a description (optional) ..." class="resize-none w-full text-center h-32 focus:outline-none text-md"></textarea>
+          </div>
+          <div class="flex justify-between gap-3">
+            <div class="w-36">
+              <label for="modify-priority" class="block mb-2 text-sm font-medium text-gray-900">Priority</label>
+              <select id="modify-priority" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                <option value="P1">P1</option>
+                <option value="P2">P2</option>
+                <option value="P3">P3</option>
+              </select>
+            </div>
+            <div>
+              <label for="modify-due-date" class="block mb-2 text-sm font-medium text-gray-900">Due Date</label>
+              <div class="relative max-w-sm">
+                <input datepicker id="modify-due-date" type="date" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full ps-3 p-2.5 " placeholder="Select date">
+              </div>
+            </div>
+            <div class="w-36">
+              <label for="modify-to-list" class="block mb-2 text-sm font-medium text-gray-900">Add To</label>
+              <select id="modify-to-list" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                <option value="ToDo">To Do</option>
+                <option value="Doing">Doing</option>
+                <option value="Done">Done</option>
+              </select>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Modal Footer -->
+      
+      <div class="h-16 flex items-start px-7">
+        <button role="button" id="save-modify" class="px-5 py-2 rounded bg-blue-600 text-gray-50">Save</button>
       </div>
 
     </div>
