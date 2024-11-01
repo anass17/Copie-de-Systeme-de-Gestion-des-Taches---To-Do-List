@@ -462,22 +462,27 @@ for (let item of doingListBody.children) {
         item.classList.remove("opacity-70", "border-2", "border-blue-500", "border-dashed", "blur-[1px]");
         item.classList.add("hover:bg-slate-200", "border-l-4");
 
-        doneListBody.classList.remove("border", "border-red-500");
-        doneListBody.classList.add("border-gray-300");
+        // doneListBody.classList.remove("border", "border-red-500");
+        // doneListBody.classList.add("border-gray-300");
     });
-    // todoListBody.addEventListener("dragover", function (e) {
-    //     e.preventDefault();
-    // });
-    // todoListBody.addEventListener("drop", function (e) {
-    //     if (todoListBody.firstElementChild.tagName != "DIV") {
-    //         todoListBody.firstElementChild.remove();
-    //         todoListBody.append(target);
-    //     } else {
-    //         todoListBody.firstElementChild.before(target);
-    //     }
-    // });
-
 }
+for (let item of todoListBody.children) {
+    item.addEventListener("dragstart", function () {
+        draggedItem = item;
+        item.classList.add("opacity-70", "border-2", "border-blue-500", "border-dashed", "blur-[1px]");
+        item.classList.remove("hover:bg-slate-200", "border-l-4");
+    });
+    
+    item.addEventListener("dragend", function (e) {
+        item.classList.remove("opacity-70", "border-2", "border-blue-500", "border-dashed", "blur-[1px]");
+        item.classList.add("hover:bg-slate-200", "border-l-4");
+
+        // doneListBody.classList.remove("border", "border-red-500");
+        // doneListBody.classList.add("border-gray-300");
+    });
+}
+
+// Drag and Drop: Done List
 
 doneListBody.addEventListener("dragover", function (e) {
     this.classList.add("border", "border-blue-500");
@@ -502,6 +507,35 @@ doneListBody.addEventListener("drop", function (e) {
     updateStatistiques();
     draggedItem = null;
 });
+
+
+// Drag and Drop: Doing List
+
+doingListBody.addEventListener("dragover", function (e) {
+    this.classList.add("border", "border-blue-500");
+    this.classList.remove("border-gray-300");
+    e.preventDefault();
+});
+
+doingListBody.addEventListener("dragleave", function (e) {
+    doingListBody.classList.remove("border", "border-blue-500");
+    doingListBody.classList.add("border-gray-300");
+});
+
+doingListBody.addEventListener("drop", function (e) {
+    doingListBody.classList.remove("border", "border-blue-500");
+    doingListBody.classList.add("border-gray-300");
+    if (doingListBody.firstElementChild.tagName != "DIV") {
+        doingListBody.innerHTML = "";
+        doingListBody.append(draggedItem);
+    } else {
+        doingListBody.firstElementChild.before(draggedItem);
+    }
+    updateStatistiques();
+    draggedItem = null;
+});
+
+// Drag and Drop: To Do List
 
 todoListBody.addEventListener("dragover", function (e) {
     this.classList.add("border", "border-blue-500");
@@ -547,7 +581,7 @@ function updateStatistiques() {
         doingTotalTasks.textContent = doingListBody.childElementCount;
     }
 
-    if (doneTotalTasks.childElementCount == 0 || doneTotalTasks.firstElementChild.tagName == 'P') {
+    if (doneListBody.childElementCount == 0 || doneListBody.firstElementChild.tagName == 'P') {
         doneTotalTasks.textContent = 0;
         doneListBody.innerHTML = `<p class="text-center text-gray-500 pt-6 px-7">This list is empty, add or move a card here to be shown.</p>`;
     } else {
