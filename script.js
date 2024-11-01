@@ -36,8 +36,10 @@ const closeModifyModal = taskModifyingModal.querySelector('#close-modify-modal')
 // Filter
 
 const filterPriority = document.querySelector('#filter-priority');
+const filterDueDate = document.querySelector('#filter-due-date');
 const searchInput = document.querySelector('#search-input');
 const searchBtn = document.querySelector('#search-btn');
+const filterClearBtn = document.querySelector("#filter-clear");
 
 const addTasksArray = [];
 
@@ -221,6 +223,7 @@ saveAddBtn.addEventListener("click", function () {
             dateStr = `${dateParts[2]} ${monthNames[+dateParts[1] - 1]} ${dateParts[0]} - ${datetime[1]}`;
         }
 
+        task.dataset.datetime = item.dueDate;
 
         task.innerHTML = 
         `<div class="w-11/12">
@@ -228,7 +231,7 @@ saveAddBtn.addEventListener("click", function () {
             <p class="pe-3 text-ellipsis overflow-hidden text-nowrap text-gray-500 mb-2">${item.description}</p>
             <div class="flex">
                 <span class="${item.priority == "P3" ? "bg-lime-500" : (item.priority == "P2" ? "bg-yellow-500" : "bg-red-500")} text-gray-100 text-xs font-medium me-2 px-4 py-1 rounded-md task-priority">${item.priority}</span>
-                <span data-datetime="${item.dueDate}" class="${dateStr.startsWith("Today") || dateStr.startsWith("Tomorrow") ? "bg-red-200 border-red-300" : "bg-gray-50"} text-dark-500 border text-xs font-medium me-2 px-4 py-1 rounded-md inline-flex">
+                <span class="${dateStr.startsWith("Today") || dateStr.startsWith("Tomorrow") ? "bg-red-200 border-red-300" : "bg-gray-50"} text-dark-500 border text-xs font-medium me-2 px-4 py-1 rounded-md inline-flex task-due-date">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="15" height="15" class="me-2 inline-block"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
                         <path d="M128 0c13.3 0 24 10.7 24 24l0 40 144 0 0-40c0-13.3 10.7-24 24-24s24 10.7 24 24l0 40 40 0c35.3 0 64 28.7 64 64l0 16 0 48 0 256c0 35.3-28.7 64-64 64L64 512c-35.3 0-64-28.7-64-64L0 192l0-48 0-16C0 92.7 28.7 64 64 64l40 0 0-40c0-13.3 10.7-24 24-24zM400 192L48 192l0 256c0 8.8 7.2 16 16 16l320 0c8.8 0 16-7.2 16-16l0-256zM329 297L217 409c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47 95-95c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"></path>
                     </svg>
@@ -353,6 +356,15 @@ function closeConfirmModal(e, el) {
 /// Filter Tasks
 ///////////////////////////////////////////////
 
+
+filterClearBtn.addEventListener('click', function(e) {
+    e.preventDefault();
+    searchInput.value = "";
+    filterPriority.value = "";
+    filterDueDate.value = "";
+    filterTasks();
+})
+
 filterPriority.addEventListener("change", function () {
     filterTasks();
 });
@@ -362,35 +374,57 @@ searchBtn.addEventListener("click", function (e) {
     filterTasks();
 });
 
+filterDueDate.addEventListener("change", filterTasks);
+
 function filterTasks() {
     const tasksInTodo = todoListBody.children;
     const tasksInDoing = doingListBody.children;
     const tasksInDone = doneListBody.children;
     
     for (task of tasksInDoing) {
-        if (task.querySelector("h3").textContent.search(searchInput.value) >= 0 && task.querySelector(".task-priority").textContent.search(filterPriority.value) >= 0) {
-            task.classList.remove('hidden');
-        } else {
-            task.classList.add('hidden');
-        }
+        checkTaskFilter(task);
     }
     for (task of tasksInTodo) {
+        checkTaskFilter(task);
+    }
+    for (task of tasksInDone) {
+        checkTaskFilter(task);
+    }
+}
+
+function checkTaskFilter(task) {
+    try {
         if (task.querySelector("h3").textContent.search(searchInput.value) >= 0 && task.querySelector(".task-priority").textContent.search(filterPriority.value) >= 0) {
-            task.classList.remove('hidden');
+            
+            if (filterDueDate.value == "") {
+                task.classList.remove('hidden');
+            } else if (filterDueDate.value == "Today" && task.querySelector(".task-due-date").textContent.trim().startsWith("Today")) {
+                task.classList.remove('hidden');
+            } else if (filterDueDate.value == "Tomorrow" && task.querySelector(".task-due-date").textContent.trim().startsWith("Tomorrow")) {
+                task.classList.remove('hidden');
+            } else {
+
+                let currentDate = new Date();
+            
+                let selectedDueDate = new Date(task.dataset.datetime);
+        
+                let differenceInMs = selectedDueDate.getTime() - currentDate.getTime();
+
+                if (filterDueDate.value == "Week" && differenceInMs < 604800000) {
+                    task.classList.remove('hidden');
+                } else if (filterDueDate.value == "Month" && differenceInMs < 2592000000) {
+                    task.classList.remove('hidden');
+                } else if (filterDueDate.value == "Over-month" && differenceInMs > 2592000000) {
+                    task.classList.remove('hidden');
+                } else {
+                    task.classList.add('hidden');
+                }
+            }
         } else {
             task.classList.add('hidden');
         }
-    }
-    for (task of tasksInDone) {
-        try {
-            if (task.querySelector("h3").textContent.search(searchInput.value) >= 0 && task.querySelector(".task-priority").textContent.search(filterPriority.value) >= 0) {
-                task.classList.remove('hidden');
-            } else {
-                task.classList.add('hidden');
-            }
-        } catch {
+    } catch {
 
-        }
     }
 }
 

@@ -20,13 +20,13 @@
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z"/>
             </svg>
         </div>
-        <input type="search" id="search-input" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 light:bg-gray-700 light:border-gray-600 light:placeholder-gray-400 light:text-white light:focus:ring-blue-500 light:focus:border-blue-500" placeholder="Type in Something ..." required />
+        <input type="search" id="search-input" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg bg-gray-50 focus:ring-blue-500 focus:border-blue-500 light:bg-gray-700 light:border-gray-600 light:placeholder-gray-400 light:text-white light:focus:ring-blue-500 light:focus:border-blue-500" placeholder="Type in Something ..." />
         <button id="search-btn" type="submit" class="text-white absolute end-2.5 bottom-2.5 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2 light:bg-blue-600 light:hover:bg-blue-700 light:focus:ring-blue-800">Search</button>
     </div>
     
     
-    <div class="flex gap-4 mt-3">
-      <div class="w-24">
+    <div class="flex justify-between gap-4 mt-3">
+      <div class="w-32">
         <label for="filter-priority" class="block mb-2 text-sm font-medium text-gray-900">Priority</label>
         <select id="filter-priority" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
           <option selected value="">All</option>
@@ -35,10 +35,10 @@
           <option value="P3">P3</option>
         </select>
       </div>
-      <div>
-        <label for="due-date" class="block mb-2 text-sm font-medium text-gray-900">Due Date</label>
-        <select id="due-date" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
-          <option selected>Select due date</option>
+      <div class="w-32">
+        <label for="filter-due-date" class="block mb-2 text-sm font-medium text-gray-900">Due Date</label>
+        <select id="filter-due-date" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+          <option selected value="">All</option>
           <option value="Today">Today</option>
           <option value="Tomorrow">Tomorrow</option>
           <option value="Week">Within a week</option>
@@ -46,8 +46,8 @@
           <option value="Over-month">more than a month</option>
         </select>
       </div>
+      <button id="filter-clear" class="w-32 p-2.5 bg-blue-700 self-end rounded-md text-white" role="button">Clear</button>
     </div>
-
   </form>
 
   <div class="mt-20 grid grid-cols-1 gap-5 lg:grid-cols-3">
@@ -66,17 +66,38 @@
 
         <!-- Task -->
         
-        <div draggable="true" class="border-l-4 border-lime-500 shadow bg-white px-3 pt-2 pb-4 flex justify-between items-center mb-4 hover:bg-slate-200 transition-colors" role="button">
+        <div draggable="true" data-datetime="2024-12-23T11:53" class="border-l-4 border-lime-500 shadow bg-white px-3 pt-2 pb-4 flex justify-between items-center mb-4 hover:bg-slate-200 transition-colors" role="button">
           <div class="w-11/12">
             <h3 class="mb-1 font-semibold">Create Home Page</h3>
             <p class="pe-3 text-ellipsis overflow-hidden text-nowrap text-gray-500 mb-2">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quam, molestiae? Praesentium eum vitae ullam nesciunt?</p>
             <div class="flex">
               <span class="bg-lime-500 text-gray-100 text-xs font-medium me-2 px-4 py-1 rounded-md task-priority">P3</span>
-              <span class="bg-gray-50 text-dark-500 border text-xs font-medium me-2 px-4 py-1 rounded-md inline-flex">
+              <span class="bg-gray-50 text-dark-500 border text-xs font-medium me-2 px-4 py-1 rounded-md inline-flex task-due-date">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="15" height="15" class="me-2 inline-block"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
                   <path d="M128 0c13.3 0 24 10.7 24 24l0 40 144 0 0-40c0-13.3 10.7-24 24-24s24 10.7 24 24l0 40 40 0c35.3 0 64 28.7 64 64l0 16 0 48 0 256c0 35.3-28.7 64-64 64L64 512c-35.3 0-64-28.7-64-64L0 192l0-48 0-16C0 92.7 28.7 64 64 64l40 0 0-40c0-13.3 10.7-24 24-24zM400 192L48 192l0 256c0 8.8 7.2 16 16 16l320 0c8.8 0 16-7.2 16-16l0-256zM329 297L217 409c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47 95-95c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"></path>
                 </svg>
                 23 Dec 2024 - 11:53
+              </span>
+            </div>
+          </div>
+          <button role="button" class="ms-auto delete-task">
+            <svg width="17" height="17" class="fill-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M135.2 17.7C140.6 6.8 151.7 0 163.8 0L284.2 0c12.1 0 23.2 6.8 28.6 17.7L320 32l96 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 96C14.3 96 0 81.7 0 64S14.3 32 32 32l96 0 7.2-14.3zM32 128l384 0 0 320c0 35.3-28.7 64-64 64L96 512c-35.3 0-64-28.7-64-64l0-320zm96 64c-8.8 0-16 7.2-16 16l0 224c0 8.8 7.2 16 16 16s16-7.2 16-16l0-224c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16l0 224c0 8.8 7.2 16 16 16s16-7.2 16-16l0-224c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16l0 224c0 8.8 7.2 16 16 16s16-7.2 16-16l0-224c0-8.8-7.2-16-16-16z"/></svg>
+          </button>
+        </div>
+
+        <!-- Task -->
+        
+        <div draggable="true" data-datetime="2024-11-26T14:23" class="border-l-4 border-lime-500 shadow bg-white px-3 pt-2 pb-4 flex justify-between items-center mb-4 hover:bg-slate-200 transition-colors" role="button">
+          <div class="w-11/12">
+            <h3 class="mb-1 font-semibold">Host the site in Github Pages</h3>
+            <p class="pe-3 text-ellipsis overflow-hidden text-nowrap text-gray-500 mb-2">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quam, molestiae? Praesentium eum vitae ullam nesciunt?</p>
+            <div class="flex">
+              <span class="bg-lime-500 text-gray-100 text-xs font-medium me-2 px-4 py-1 rounded-md task-priority">P3</span>
+              <span class="bg-gray-50 text-dark-500 border text-xs font-medium me-2 px-4 py-1 rounded-md inline-flex task-due-date">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="15" height="15" class="me-2 inline-block"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+                  <path d="M128 0c13.3 0 24 10.7 24 24l0 40 144 0 0-40c0-13.3 10.7-24 24-24s24 10.7 24 24l0 40 40 0c35.3 0 64 28.7 64 64l0 16 0 48 0 256c0 35.3-28.7 64-64 64L64 512c-35.3 0-64-28.7-64-64L0 192l0-48 0-16C0 92.7 28.7 64 64 64l40 0 0-40c0-13.3 10.7-24 24-24zM400 192L48 192l0 256c0 8.8 7.2 16 16 16l320 0c8.8 0 16-7.2 16-16l0-256zM329 297L217 409c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47 95-95c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"></path>
+                </svg>
+                26 Nov 2024 - 14:23
               </span>
             </div>
           </div>
@@ -110,17 +131,17 @@
 
         <!-- Task -->
 
-        <div draggable="true" class="border-l-4 border-lime-500 shadow bg-white px-3 pt-2 pb-4 flex justify-between items-center mb-4 hover:bg-slate-200 transition-colors" role="button">
+        <div draggable="true" data-datetime="2024-11-07T16:30" class="border-l-4 border-lime-500 shadow bg-white px-3 pt-2 pb-4 flex justify-between items-center mb-4 hover:bg-slate-200 transition-colors" role="button">
           <div class="w-11/12">
             <h3 class="mb-2">Create Home Page</h3>
             <p class="pe-3 text-ellipsis overflow-hidden text-nowrap text-gray-500 mb-2">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quam, molestiae? Praesentium eum vitae ullam nesciunt?</p>
             <div class="flex">
               <span class="bg-lime-500 text-gray-100 text-xs font-medium me-2 px-4 py-1 rounded-md task-priority">P3</span>
-              <span class="bg-gray-50 text-dark-500 border text-xs font-medium me-2 px-4 py-1 rounded-md inline-flex">
+              <span class="bg-gray-50 text-dark-500 border text-xs font-medium me-2 px-4 py-1 rounded-md inline-flex task-due-date">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="15" height="15" class="me-2 inline-block"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
                   <path d="M128 0c13.3 0 24 10.7 24 24l0 40 144 0 0-40c0-13.3 10.7-24 24-24s24 10.7 24 24l0 40 40 0c35.3 0 64 28.7 64 64l0 16 0 48 0 256c0 35.3-28.7 64-64 64L64 512c-35.3 0-64-28.7-64-64L0 192l0-48 0-16C0 92.7 28.7 64 64 64l40 0 0-40c0-13.3 10.7-24 24-24zM400 192L48 192l0 256c0 8.8 7.2 16 16 16l320 0c8.8 0 16-7.2 16-16l0-256zM329 297L217 409c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47 95-95c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"></path>
                 </svg>
-                23 Dec 2024 - 16:30
+                7 Nov 2024 - 16:30
               </span>
             </div>
           </div>
@@ -131,13 +152,13 @@
 
         <!-- Task -->
 
-        <div draggable="true" class="border-l-4 border-yellow-500 shadow bg-white px-3 pt-2 pb-4 flex justify-between items-center mb-4 hover:bg-slate-200 transition-colors" role="button">
+        <div draggable="true" data-datetime="2024-11-02T17:15" class="border-l-4 border-yellow-500 shadow bg-white px-3 pt-2 pb-4 flex justify-between items-center mb-4 hover:bg-slate-200 transition-colors" role="button">
           <div class="w-11/12">
             <h3 class="mb-2">Push Changes to GitHub</h3>
             <p class="pe-3 text-ellipsis overflow-hidden text-nowrap text-gray-500 mb-2">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quam, molestiae? Praesentium eum vitae ullam nesciunt?</p>
             <div class="flex">
               <span class="bg-yellow-500 text-gray-100 text-xs font-medium me-2 px-4 py-1 rounded-md task-priority">P2</span>
-              <span class="bg-red-200 text-dark-500 border border-red-300 text-xs font-medium me-2 px-4 py-1 rounded-md inline-flex">
+              <span class="bg-red-200 text-dark-500 border border-red-300 text-xs font-medium me-2 px-4 py-1 rounded-md inline-flex task-due-date">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="15" height="15" class="me-2 inline-block"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
                   <path d="M128 0c13.3 0 24 10.7 24 24l0 40 144 0 0-40c0-13.3 10.7-24 24-24s24 10.7 24 24l0 40 40 0c35.3 0 64 28.7 64 64l0 16 0 48 0 256c0 35.3-28.7 64-64 64L64 512c-35.3 0-64-28.7-64-64L0 192l0-48 0-16C0 92.7 28.7 64 64 64l40 0 0-40c0-13.3 10.7-24 24-24zM400 192L48 192l0 256c0 8.8 7.2 16 16 16l320 0c8.8 0 16-7.2 16-16l0-256zM329 297L217 409c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47 95-95c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"></path>
                 </svg>
@@ -152,13 +173,13 @@
 
         <!-- Task -->
 
-        <div draggable="true" class="border-l-4 border-red-500 px-3 shadow bg-white pt-2 pb-4 flex justify-between items-center mb-4 hover:bg-slate-200 transition-colors" role="button">
+        <div draggable="true" data-datetime="2024-11-01T12:45" class="border-l-4 border-red-500 px-3 shadow bg-white pt-2 pb-4 flex justify-between items-center mb-4 hover:bg-slate-200 transition-colors" role="button">
           <div class="w-11/12">
             <h3 class="mb-2">Design About Page in Figma</h3>
             <p class="pe-3 text-ellipsis overflow-hidden text-nowrap text-gray-500 mb-2">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quam, molestiae? Praesentium eum vitae ullam nesciunt?</p>
             <div class="flex">
               <span class="bg-red-500 text-gray-100 text-xs font-medium me-2 px-4 py-1 rounded-md task-priority">P1</span>
-              <span class="bg-red-200 border-red-300 text-dark-500 border  text-xs font-medium me-2 px-4 py-1 rounded-md inline-flex">
+              <span class="bg-red-200 border-red-300 text-dark-500 border  text-xs font-medium me-2 px-4 py-1 rounded-md inline-flex task-due-date">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="15" height="15" class="me-2 inline-block"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
                   <path d="M128 0c13.3 0 24 10.7 24 24l0 40 144 0 0-40c0-13.3 10.7-24 24-24s24 10.7 24 24l0 40 40 0c35.3 0 64 28.7 64 64l0 16 0 48 0 256c0 35.3-28.7 64-64 64L64 512c-35.3 0-64-28.7-64-64L0 192l0-48 0-16C0 92.7 28.7 64 64 64l40 0 0-40c0-13.3 10.7-24 24-24zM400 192L48 192l0 256c0 8.8 7.2 16 16 16l320 0c8.8 0 16-7.2 16-16l0-256zM329 297L217 409c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47 95-95c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"></path>
                 </svg>
@@ -173,13 +194,13 @@
 
         <!-- Task -->
 
-        <div draggable="true" class="border-l-4 border-lime-500 px-3 shadow bg-white pt-2 pb-4 flex justify-between items-center mb-4 hover:bg-slate-200 transition-colors" role="button">
+        <div draggable="true" data-datetime="2025-12-19T16:30" class="border-l-4 border-lime-500 px-3 shadow bg-white pt-2 pb-4 flex justify-between items-center mb-4 hover:bg-slate-200 transition-colors" role="button">
           <div class="w-11/12">
             <h3 class="mb-1 font-semibold">Create Home Page</h3>
             <p class="pe-3 text-ellipsis overflow-hidden text-nowrap text-gray-500 mb-2">Lorem ipsum dolor sit amet, consectetur adipisicing elit. Quam, molestiae? Praesentium eum vitae ullam nesciunt?</p>
             <div class="flex">
               <span class="bg-lime-500 text-gray-100 text-xs font-medium me-2 px-4 py-1 rounded-md task-priority">P3</span>
-              <span class="bg-gray-50 text-dark-500 border text-xs font-medium me-2 px-4 py-1 rounded-md inline-flex">
+              <span class="bg-gray-50 text-dark-500 border text-xs font-medium me-2 px-4 py-1 rounded-md inline-flex task-due-date">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="15" height="15" class="me-2 inline-block"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
                   <path d="M128 0c13.3 0 24 10.7 24 24l0 40 144 0 0-40c0-13.3 10.7-24 24-24s24 10.7 24 24l0 40 40 0c35.3 0 64 28.7 64 64l0 16 0 48 0 256c0 35.3-28.7 64-64 64L64 512c-35.3 0-64-28.7-64-64L0 192l0-48 0-16C0 92.7 28.7 64 64 64l40 0 0-40c0-13.3 10.7-24 24-24zM400 192L48 192l0 256c0 8.8 7.2 16 16 16l320 0c8.8 0 16-7.2 16-16l0-256zM329 297L217 409c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47 95-95c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"></path>
                 </svg>
