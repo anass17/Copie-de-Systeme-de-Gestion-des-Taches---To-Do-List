@@ -3,7 +3,13 @@
     max-height: 0;
     padding: 0 ;
     margin: 0;
-    animation: deleteTask .5s .5s ease-in-out backwards;
+    animation: deleteTask .5s .3s ease-in-out backwards;
+}
+
+.animate-added-card {
+    transform: scale(1);
+    max-height: 150px;
+    animation: addTask .5s .3s ease-in-out backwards;
 }
 
 @keyframes deleteTask {
@@ -19,5 +25,22 @@
         transform: scale(0);
         margin: 0;
         padding: 0;
+    }
+}
+
+@keyframes addTask {
+    0% {
+        max-height: 0;
+        transform: scale(0);
+        margin: 0;
+        padding: 0;
+        
+    }
+    50% {
+        transform: scale(0);
+    }
+    100% {
+        transform: scale(1);
+        max-height: 130px;
     }
 }

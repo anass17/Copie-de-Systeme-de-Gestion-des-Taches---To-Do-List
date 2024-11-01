@@ -203,7 +203,7 @@ saveAddBtn.addEventListener("click", function () {
     for (const item of addTasksArray) {
         const task = document.createElement('div');
         task.role = "button";
-        task.className = `border-l-4 ${item.priority == "P3" ? "border-lime-500" : (item.priority == "P2" ? "border-yellow-500" : "border-red-500")} shadow bg-white px-3 pt-2 pb-4 flex justify-between items-center mb-4 hover:bg-slate-200 transition-colors`;
+        task.className = `animate-added-card border-l-4 ${item.priority == "P3" ? "border-lime-500" : (item.priority == "P2" ? "border-yellow-500" : "border-red-500")} shadow bg-white px-3 pt-2 pb-4 flex justify-between items-center mb-4 hover:bg-slate-200 transition-colors`;
 
         let datetime = item.dueDate.split("T");
 
@@ -255,11 +255,16 @@ saveAddBtn.addEventListener("click", function () {
         } else {
             attachTaskToList(doneListBody, task);
         }
+
+        setTimeout(() => {
+            task.classList.remove("animate-added-card");
+        }, 750);
+
         updateStatistiques();
     }
+    taskAddingModal.classList.remove("flex");
+    taskAddingModal.classList.add("hidden");
     clearData();
-    taskModifyingModal.classList.remove("flex");
-    taskModifyingModal.classList.add("hidden");
 });
 
 function attachTaskToList(list, task) {
@@ -336,7 +341,7 @@ function showConfirmModal(target) {
                 doneListBody.append(para)
             }
             updateStatistiques();
-        }, 950);
+        }, 750);
         div.remove();
 
         
