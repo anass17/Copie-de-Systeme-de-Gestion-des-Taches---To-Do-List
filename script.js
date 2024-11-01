@@ -113,7 +113,18 @@ addAnotherTaskBtn.addEventListener('click', function () {
         addDueDate.style.borderColor = "red";
         errorExist = true;
     } else {
-        addDueDate.style.borderColor = "";
+        let selectedDueDate = new Date(addDueDate.value);
+        let currentDate = new Date();
+
+        let differenceInMs = selectedDueDate.getTime() - currentDate.getTime();
+
+        if (differenceInMs <= 0) {
+            addDueDate.style.borderColor = "red";
+            errorExist = true;
+        } else {
+            addDueDate.style.borderColor = "";
+        }
+
     }
     if (addToList.value == "Select") {
         addToList.style.borderColor = "red";
@@ -185,12 +196,31 @@ addAnotherTaskBtn.addEventListener('click', function () {
 saveAddBtn.addEventListener("click", function () {
     let monthNames = ["Jan", "Fev", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
     
+    let currentDate = new Date();
+
     for (const item of addTasksArray) {
         const task = document.createElement('div');
         task.role = "button";
         task.className = `border-l-4 ${item.priority == "P3" ? "border-lime-500" : (item.priority == "P2" ? "border-yellow-500" : "border-red-500")} shadow bg-white px-3 pt-2 pb-4 flex justify-between items-center mb-4 hover:bg-slate-200 transition-colors`;
 
-        dateParts = item.dueDate.split("-");
+        let datetime = item.dueDate.split("T");
+
+        dateParts = datetime[0].split("-");
+
+        let selectedDueDate = new Date(item.dueDate);
+
+        let differenceInMs = selectedDueDate.getTime() - currentDate.getTime();
+
+        let dateStr;
+
+        if (differenceInMs < 86400000) {        // 1000 (ms) * 60 (s) * 60 (min) * 24 (h)
+            dateStr = `Today - ${datetime[1]}`;
+        } else if (differenceInMs < 172800000) {        // 1000 (ms) * 60 (s) * 60 (min) * 24 (h) * 2
+            dateStr = `Tomorrow - ${datetime[1]}`;
+        } else {
+            dateStr = `${dateParts[2]} ${monthNames[+dateParts[1] - 1]} ${dateParts[0]} - ${datetime[1]}`;
+        }
+
 
         task.innerHTML = 
         `<div class="w-11/12">
@@ -198,11 +228,11 @@ saveAddBtn.addEventListener("click", function () {
             <p class="pe-3 text-ellipsis overflow-hidden text-nowrap text-gray-500 mb-2">${item.description}</p>
             <div class="flex">
                 <span class="${item.priority == "P3" ? "bg-lime-500" : (item.priority == "P2" ? "bg-yellow-500" : "bg-red-500")} text-gray-100 text-xs font-medium me-2 px-4 py-1 rounded-md task-priority">${item.priority}</span>
-                <span class="bg-gray-50 text-dark-500 border text-xs font-medium me-2 px-4 py-1 rounded-md inline-flex">
+                <span data-datetime="${item.dueDate}" class="${dateStr.startsWith("Today") || dateStr.startsWith("Tomorrow") ? "bg-red-200 border-red-300" : "bg-gray-50"} text-dark-500 border text-xs font-medium me-2 px-4 py-1 rounded-md inline-flex">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="15" height="15" class="me-2 inline-block"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
                         <path d="M128 0c13.3 0 24 10.7 24 24l0 40 144 0 0-40c0-13.3 10.7-24 24-24s24 10.7 24 24l0 40 40 0c35.3 0 64 28.7 64 64l0 16 0 48 0 256c0 35.3-28.7 64-64 64L64 512c-35.3 0-64-28.7-64-64L0 192l0-48 0-16C0 92.7 28.7 64 64 64l40 0 0-40c0-13.3 10.7-24 24-24zM400 192L48 192l0 256c0 8.8 7.2 16 16 16l320 0c8.8 0 16-7.2 16-16l0-256zM329 297L217 409c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47 95-95c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"></path>
                     </svg>
-                    ${dateParts[2]} ${monthNames[+dateParts[1] - 1]} ${dateParts[0]}
+                    ${dateStr}
                 </span>
             </div>
         </div>
