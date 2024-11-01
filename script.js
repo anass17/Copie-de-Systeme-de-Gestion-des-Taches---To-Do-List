@@ -43,6 +43,10 @@ const addTasksArray = [];
 
 updateStatistiques();
 
+////////////////////////////////////////
+/// Add Tasks
+////////////////////////////////////////
+
 addTaskBtn.addEventListener('click', function () {
     taskAddingModal.classList.remove('hidden');
     taskAddingModal.classList.add('flex');
@@ -83,85 +87,7 @@ function closeModalOutside(e) {
     }
 }
 
-// dd
-
 window.addEventListener('click', closeModalOutside);
-
-document.querySelectorAll('.delete-task').forEach((item) => {
-    item.addEventListener('click', function() {
-        showConfirmModal(item);
-    });
-});
-
-function showConfirmModal(target) {
-    const div = document.createElement('div');
-    div.id = "confirm-delete-modal";
-    div.className = "flex w-full h-screen fixed top-0 left-0 bg-opacity-60 bg-gray-900 justify-center items-center";
-    div.innerHTML = `
-    <div class="bg-white rounded-xl w-2/5 h-72 shadow-lg border border-gray-500 flex flex-col justify-between">
-      
-      <div class="h-16 flex items-center px-7 justify-between border-b border-gray-300">
-        <h2 class="font-semibold text-lg">Confirm delete</h2>
-        <button role="button" class="font-bold text-lg text-red-500" id="close-confirm-delete-modal">X</button>
-      </div>
-
-      <div class="py-4 px-10">
-        <p>Do you really want to delete the card <b>"${target.parentElement.querySelector('h3').textContent.trim()}"</b>?</p>
-      </div>
-      
-      <div class="h-16 flex items-start px-7">
-        <button role="button" class="px-5 py-2 rounded bg-red-600 text-gray-50" id="confirm-delete-btn">Confirm</button>
-      </div>
-
-    </div>`;
-
-    document.body.append(div);
-
-    window.addEventListener('click', function (e) {
-        closeConfirmModal(e, div);
-    });
-
-    div.querySelector('#close-confirm-delete-modal').addEventListener('click', function () {
-        div.remove();
-    });
-    div.querySelector("#confirm-delete-btn").addEventListener('click', function () {
-        // target.parentElement.remove();
-        target.parentElement.classList.add("animate-deleted-card");
-        setTimeout(() => {
-            target.parentElement.remove();
-
-            if (todoListBody.childElementCount == 0) {
-                const para = document.createElement('p');
-                para.className = "text-center text-gray-500 pt-6 px-7";
-                para.textContent = "This list is empty, add or move a card here to be shown.";
-                todoListBody.append(para)
-            } else if (doingListBody.childElementCount == 0) {
-                const para = document.createElement('p');
-                para.className = "text-center text-gray-500 pt-6 px-7";
-                para.textContent = "This list is empty, add or move a card here to be shown.";
-                doingListBody.append(para)
-            } else if (doneListBody.childElementCount == 0) {
-                const para = document.createElement('p');
-                para.className = "text-center text-gray-500 pt-6 px-7";
-                para.textContent = "This list is empty, add or move a card here to be shown.";
-                doneListBody.append(para)
-            }
-            updateStatistiques();
-        }, 950);
-        div.remove();
-
-        
-    });
-}
-
-function closeConfirmModal(e, el) {
-    if (e.target == el) {
-        el.remove();
-        window.addEventListener('click', function() {
-            closeConfirmModal(e, div);
-        })
-    }
-}
 
 addAnotherTaskBtn.addEventListener('click', function () {
 
@@ -271,13 +197,13 @@ saveAddBtn.addEventListener("click", function () {
             <h3 class="mb-1 font-semibold">${item.title}</h3>
             <p class="pe-3 text-ellipsis overflow-hidden text-nowrap text-gray-500 mb-2">${item.description}</p>
             <div class="flex">
-            <span class="${item.priority == "P3" ? "bg-lime-500" : (item.priority == "P2" ? "bg-yellow-500" : "bg-red-500")} text-gray-100 text-xs font-medium me-2 px-4 py-1 rounded-md">${item.priority}</span>
-            <span class="bg-gray-50 text-dark-500 border text-xs font-medium me-2 px-4 py-1 rounded-md inline-flex">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="15" height="15" class="me-2 inline-block"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
-                <path d="M128 0c13.3 0 24 10.7 24 24l0 40 144 0 0-40c0-13.3 10.7-24 24-24s24 10.7 24 24l0 40 40 0c35.3 0 64 28.7 64 64l0 16 0 48 0 256c0 35.3-28.7 64-64 64L64 512c-35.3 0-64-28.7-64-64L0 192l0-48 0-16C0 92.7 28.7 64 64 64l40 0 0-40c0-13.3 10.7-24 24-24zM400 192L48 192l0 256c0 8.8 7.2 16 16 16l320 0c8.8 0 16-7.2 16-16l0-256zM329 297L217 409c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47 95-95c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"></path>
-                </svg>
-                ${dateParts[2]} ${monthNames[+dateParts[1] - 1]} ${dateParts[0]}
-            </span>
+                <span class="${item.priority == "P3" ? "bg-lime-500" : (item.priority == "P2" ? "bg-yellow-500" : "bg-red-500")} text-gray-100 text-xs font-medium me-2 px-4 py-1 rounded-md task-priority">${item.priority}</span>
+                <span class="bg-gray-50 text-dark-500 border text-xs font-medium me-2 px-4 py-1 rounded-md inline-flex">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="15" height="15" class="me-2 inline-block"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+                        <path d="M128 0c13.3 0 24 10.7 24 24l0 40 144 0 0-40c0-13.3 10.7-24 24-24s24 10.7 24 24l0 40 40 0c35.3 0 64 28.7 64 64l0 16 0 48 0 256c0 35.3-28.7 64-64 64L64 512c-35.3 0-64-28.7-64-64L0 192l0-48 0-16C0 92.7 28.7 64 64 64l40 0 0-40c0-13.3 10.7-24 24-24zM400 192L48 192l0 256c0 8.8 7.2 16 16 16l320 0c8.8 0 16-7.2 16-16l0-256zM329 297L217 409c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47 95-95c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"></path>
+                    </svg>
+                    ${dateParts[2]} ${monthNames[+dateParts[1] - 1]} ${dateParts[0]}
+                </span>
             </div>
         </div>
         <button role="button" class="ms-auto delete-task">
@@ -290,11 +216,11 @@ saveAddBtn.addEventListener("click", function () {
         });
 
         if (item.list == "ToDo") {
-            todoListBody.append(task);
+            attachTaskToList(todoListBody, task);
         } else if (item.list == "Doing") {
-            doingListBody.append(task);
+            attachTaskToList(doingListBody, task);
         } else {
-            doneListBody.append(task);
+            attachTaskToList(doneListBody, task);
         }
         updateStatistiques();
     }
@@ -302,6 +228,96 @@ saveAddBtn.addEventListener("click", function () {
     taskModifyingModal.classList.remove("flex");
     taskModifyingModal.classList.add("hidden");
 });
+
+function attachTaskToList(list, task) {
+    if (list.firstElementChild.tagName == "P") {
+        list.innerHTML = "";
+        list.append(task);
+    } else {
+        list.firstElementChild.before(task);
+    }
+}
+
+//////////////////////////////////////
+/// Delete Task
+//////////////////////////////////////
+
+
+document.querySelectorAll('.delete-task').forEach((item) => {
+    item.addEventListener('click', function() {
+        showConfirmModal(item);
+    });
+});
+
+function showConfirmModal(target) {
+    const div = document.createElement('div');
+    div.id = "confirm-delete-modal";
+    div.className = "flex w-full h-screen fixed top-0 left-0 bg-opacity-60 bg-gray-900 justify-center items-center";
+    div.innerHTML = `
+    <div class="bg-white rounded-xl w-2/5 h-72 shadow-lg border border-gray-500 flex flex-col justify-between">
+      
+      <div class="h-16 flex items-center px-7 justify-between border-b border-gray-300">
+        <h2 class="font-semibold text-lg">Confirm delete</h2>
+        <button role="button" class="font-bold text-lg text-red-500" id="close-confirm-delete-modal">X</button>
+      </div>
+
+      <div class="py-4 px-10">
+        <p>Do you really want to delete the card <b>"${target.parentElement.querySelector('h3').textContent.trim()}"</b>?</p>
+      </div>
+      
+      <div class="h-16 flex items-start px-7">
+        <button role="button" class="px-5 py-2 rounded bg-red-600 text-gray-50" id="confirm-delete-btn">Confirm</button>
+      </div>
+
+    </div>`;
+
+    document.body.append(div);
+
+    window.addEventListener('click', function (e) {
+        closeConfirmModal(e, div);
+    });
+
+    div.querySelector('#close-confirm-delete-modal').addEventListener('click', function () {
+        div.remove();
+    });
+    div.querySelector("#confirm-delete-btn").addEventListener('click', function () {
+        // target.parentElement.remove();
+        target.parentElement.classList.add("animate-deleted-card");
+        setTimeout(() => {
+            target.parentElement.remove();
+
+            if (todoListBody.childElementCount == 0) {
+                const para = document.createElement('p');
+                para.className = "text-center text-gray-500 pt-6 px-7";
+                para.textContent = "This list is empty, add or move a card here to be shown.";
+                todoListBody.append(para)
+            } else if (doingListBody.childElementCount == 0) {
+                const para = document.createElement('p');
+                para.className = "text-center text-gray-500 pt-6 px-7";
+                para.textContent = "This list is empty, add or move a card here to be shown.";
+                doingListBody.append(para)
+            } else if (doneListBody.childElementCount == 0) {
+                const para = document.createElement('p');
+                para.className = "text-center text-gray-500 pt-6 px-7";
+                para.textContent = "This list is empty, add or move a card here to be shown.";
+                doneListBody.append(para)
+            }
+            updateStatistiques();
+        }, 950);
+        div.remove();
+
+        
+    });
+}
+
+function closeConfirmModal(e, el) {
+    if (e.target == el) {
+        el.remove();
+        window.addEventListener('click', function() {
+            closeConfirmModal(e, div);
+        })
+    }
+}
 
 ///////////////////////////////////////////////
 /// Filter Tasks
