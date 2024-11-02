@@ -12,6 +12,10 @@
     animation: addTask .5s .3s ease-in-out backwards;
 }
 
+.animated-message {
+    animation: successMessage 4.5s .3s ease-in-out backwards;
+}
+
 @keyframes deleteTask {
     0% {
         transform: scale(1);
@@ -42,5 +46,24 @@
     100% {
         transform: scale(1);
         max-height: 130px;
+    }
+}
+
+@keyframes successMessage {
+    0% {
+        transform: translate(-50%, -100%);
+        opacity: 0;
+    }
+    10% {
+        transform: translate(-50%, 20px);
+        opacity: 1;
+    }
+    90% {
+        transform: translate(-50%, 20px);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(-50%, -100%);
+        opacity: 0;
     }
 }

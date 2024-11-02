@@ -70,15 +70,17 @@ function closeModalAdd() {
 }
 
 function clearData() {
-    for (i = 0; i < addTasksPreviewList.childElementCount - 1; i++) {
-        addTasksPreviewList.children[i].remove();
-        addTaskTitle.value = "";
-        addTaskDescription.value = "";
-        addPriority.value = "Select";
-        addDueDate.value = "";
-        addToList.value = "Select";
+    let count = addTasksArray.length;
+    for (let i = 0; i < count; i++) {
+        addAnotherTaskBtn.previousElementSibling.remove();
         addTasksArray.pop();
     }
+    addAnotherTaskBtn.removeAttribute('disabled');
+    addTaskTitle.value = "";
+    addTaskDescription.value = "";
+    addPriority.value = "Select";
+    addDueDate.value = "";
+    addToList.value = "Select";
 }
 
 
@@ -256,6 +258,8 @@ saveAddBtn.addEventListener("click", function () {
             attachTaskToList(doneListBody, task);
         }
 
+        showSuccessMessage(1, `${addTasksArray.length} Task(s) Added successfully`);
+
         setTimeout(() => {
             task.classList.remove("animate-added-card");
         }, 750);
@@ -320,30 +324,14 @@ function showConfirmModal(target) {
     });
     div.querySelector("#confirm-delete-btn").addEventListener('click', function () {
         // target.parentElement.remove();
+        showSuccessMessage(2, `Task "${target.parentElement.querySelector('h3').textContent.trim()}" has been deleted`);
         target.parentElement.classList.add("animate-deleted-card");
         setTimeout(() => {
             target.parentElement.remove();
 
-            if (todoListBody.childElementCount == 0) {
-                const para = document.createElement('p');
-                para.className = "text-center text-gray-500 pt-6 px-7";
-                para.textContent = "This list is empty, add or move a card here to be shown.";
-                todoListBody.append(para)
-            } else if (doingListBody.childElementCount == 0) {
-                const para = document.createElement('p');
-                para.className = "text-center text-gray-500 pt-6 px-7";
-                para.textContent = "This list is empty, add or move a card here to be shown.";
-                doingListBody.append(para)
-            } else if (doneListBody.childElementCount == 0) {
-                const para = document.createElement('p');
-                para.className = "text-center text-gray-500 pt-6 px-7";
-                para.textContent = "This list is empty, add or move a card here to be shown.";
-                doneListBody.append(para)
-            }
             updateStatistiques();
         }, 750);
         div.remove();
-
         
     });
 }
@@ -491,6 +479,8 @@ saveModifyBtn.addEventListener("click", function () {
     }
     // modifyToList.value = item.parentElement.dataset.list;
     modifyTask = null;
+
+    showSuccessMessage(3, `Task "${modifyTaskTitle.value}" has been modified`);
 });
 
 function changeTaskList(listBody, modifyTask) {
@@ -670,7 +660,43 @@ function updateStatistiques() {
         doneTotalTasks.textContent = 0;
         doneListBody.innerHTML = `<p class="text-center text-gray-500 pt-6 px-7">This list is empty, add or move a card here to be shown.</p>`;
     } else {
-        doneTotalTasks.textContent = doneTotalTasks.childElementCount;
+        doneTotalTasks.textContent = doneListBody.childElementCount;
     }
 
+}
+
+/////////////////////////////////////
+/// Show Success Message
+/////////////////////////////////////
+
+function showSuccessMessage(icon, message) {
+    let msgEl = document.createElement('div');
+    let iconSVG = "";
+
+    msgEl.className = "animated-message flex items-center fixed top-0 opacity-0 left-1/2 -translate-y-full -translate-x-1/2 w-full max-w-md p-4 mb-4 text-white bg-gray-700 rounded-lg shadow-gray-500 shadow-md";
+
+    if (icon == 1) {
+        iconSVG = 
+            `<svg class="w-6 h-6" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5Zm3.707 8.207-4 4a1 1 0 0 1-1.414 0l-2-2a1 1 0 0 1 1.414-1.414L9 10.586l3.293-3.293a1 1 0 0 1 1.414 1.414Z"/>
+            </svg>`;
+    } else if (icon == 2) {
+        iconSVG = 
+            `<svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM184 232l144 0c13.3 0 24 10.7 24 24s-10.7 24-24 24l-144 0c-13.3 0-24-10.7-24-24s10.7-24 24-24z"/></svg>`;
+    } else if (icon == 3) {
+        iconSVG = 
+            `<svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" fill="currentColor"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M64 32C28.7 32 0 60.7 0 96L0 416c0 35.3 28.7 64 64 64l320 0c35.3 0 64-28.7 64-64l0-320c0-35.3-28.7-64-64-64L64 32zM325.8 139.7l14.4 14.4c15.6 15.6 15.6 40.9 0 56.6l-21.4 21.4-71-71 21.4-21.4c15.6-15.6 40.9-15.6 56.6 0zM119.9 289L225.1 183.8l71 71L190.9 359.9c-4.1 4.1-9.2 7-14.9 8.4l-60.1 15c-5.5 1.4-11.2-.2-15.2-4.2s-5.6-9.7-4.2-15.2l15-60.1c1.4-5.6 4.3-10.8 8.4-14.9z"/></svg>`
+    }
+
+    msgEl.innerHTML = 
+        `<div class="inline-flex items-center justify-center w-8 h-8 text-${icon == 1 ? 'green' : (icon == 2 ? "red" : "blue")}-500 rounded-lg">
+            ${iconSVG}
+        </div>
+        <div class="ms-3 text-sm font-bold">${message}</div>`;
+
+    document.body.append(msgEl);
+
+    setTimeout(() => {
+        msgEl.remove();
+    }, 5000);
 }
