@@ -83,7 +83,6 @@ function clearData() {
     addToList.value = "Select";
 }
 
-
 function closeModalOutside(e) {
     if (e.target == taskAddingModal) {
         closeModalAdd();
@@ -204,6 +203,7 @@ saveAddBtn.addEventListener("click", function () {
 
     for (const item of addTasksArray) {
         const task = document.createElement('div');
+        task.setAttribute("draggable", "true");
         task.role = "button";
         task.className = `animate-added-card border-l-4 ${item.priority == "P3" ? "border-lime-500" : (item.priority == "P2" ? "border-yellow-500" : "border-red-500")} shadow bg-white px-3 pt-2 pb-4 flex justify-between items-center mb-4 hover:bg-slate-200 transition-colors`;
 
@@ -249,6 +249,10 @@ saveAddBtn.addEventListener("click", function () {
             let target = this;
             showConfirmModal(target);
         });
+
+        task.addEventListener('click', openModifyModal);
+
+        dragTasks(task);
 
         if (item.list == "ToDo") {
             attachTaskToList(todoListBody, task);
@@ -527,21 +531,13 @@ closeModifyModal.addEventListener('click', function () {
 let draggedItem = null;
 
 for (let item of doingListBody.children) {
-    item.addEventListener("dragstart", function () {
-        draggedItem = item;
-        item.classList.add("opacity-70", "border-2", "border-blue-500", "border-dashed", "blur-[1px]");
-        item.classList.remove("hover:bg-slate-200", "border-l-4");
-    });
-    
-    item.addEventListener("dragend", function (e) {
-        item.classList.remove("opacity-70", "border-2", "border-blue-500", "border-dashed", "blur-[1px]");
-        item.classList.add("hover:bg-slate-200", "border-l-4");
-
-        // doneListBody.classList.remove("border", "border-red-500");
-        // doneListBody.classList.add("border-gray-300");
-    });
+    dragTasks(item);
 }
 for (let item of todoListBody.children) {
+    dragTasks(item);
+}
+
+function dragTasks(item) {
     item.addEventListener("dragstart", function () {
         draggedItem = item;
         item.classList.add("opacity-70", "border-2", "border-blue-500", "border-dashed", "blur-[1px]");
@@ -551,9 +547,6 @@ for (let item of todoListBody.children) {
     item.addEventListener("dragend", function (e) {
         item.classList.remove("opacity-70", "border-2", "border-blue-500", "border-dashed", "blur-[1px]");
         item.classList.add("hover:bg-slate-200", "border-l-4");
-
-        // doneListBody.classList.remove("border", "border-red-500");
-        // doneListBody.classList.add("border-gray-300");
     });
 }
 
