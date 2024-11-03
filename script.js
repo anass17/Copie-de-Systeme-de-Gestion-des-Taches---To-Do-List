@@ -44,8 +44,6 @@ const filterClearBtn = document.querySelector("#filter-clear");
 
 const addTasksArray = [];
 
-updateStatistiques();
-
 listOptions.forEach(function (item) {
     item.addEventListener("click", function (e) {
         if (!this.nextElementSibling) {
@@ -125,6 +123,40 @@ function clearAllTasks(listName, list) {
         document.onclick = null;
     });
 }
+
+
+
+////////////////////////////////////////
+/// Get data from localStorage
+////////////////////////////////////////
+
+let localStorageContent = localStorage.getItem("todo");
+
+if (localStorageContent) {
+
+    let monthNames = ["Jan", "Fev", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    let currentDate = new Date();
+
+    let tasksList = localStorageContent.split('-;-');
+    tasksList.pop();
+
+
+    for (let taskItem of tasksList) {
+        let taskData = taskItem.split("||");
+        let item = {
+            id: taskData[0],
+            title: taskData[1],
+            description: taskData[2],
+            priority: taskData[3],
+            dueDate: taskData[4],
+            list: taskData[5],
+        }
+        addTaskToList(monthNames, currentDate, item);
+    }
+
+}
+
+updateStatistiques();
 
 ////////////////////////////////////////
 /// Add Tasks
@@ -227,15 +259,15 @@ addAnotherTaskBtn.addEventListener('click', function () {
         button.dataset.index = addTasksPreviewList.childElementCount - 1;
         button.textContent = "T" + addTasksPreviewList.childElementCount;
         button.className = "w-14 pb-0.5 rounded text-gray-50 border-2";
-        if (addPriority.value == "P3") {
+        if (addPriority.value == "Low") {
             button.classList.add("bg-lime-500");
-        } else if (addPriority.value == "P2") {
+        } else if (addPriority.value == "Medium") {
             button.classList.add("bg-yellow-500");
         } else {
             button.classList.add("bg-red-500");
         }
         
-        addTasksArray.push({title: addTaskTitle.value, description: addTaskDescription.value, priority: addPriority.value, dueDate: addDueDate.value, list: addToList.value});
+        addTasksArray.push({id: new Date().getTime(), title: addTaskTitle.value, description: addTaskDescription.value, priority: addPriority.value, dueDate: addDueDate.value, list: addToList.value});
         
         // On click on the tab, show its details
 
@@ -268,6 +300,7 @@ addAnotherTaskBtn.addEventListener('click', function () {
                 addPriority.value = addTasksArray[+index].priority;
                 addDueDate.value = addTasksArray[+index].dueDate;
                 addToList.value = addTasksArray[+index].list;
+                
             }
         });
         
@@ -286,76 +319,17 @@ saveAddBtn.addEventListener("click", function () {
     
     let currentDate = new Date();
 
-    // if (!localStorage.getItem("todo")) {
-    //     localStorage.setItem("todo") = "";
-    // }
+    if (!localStorage.getItem("todo")) {
+        localStorage.setItem("todo", "");
+    }
 
     for (const item of addTasksArray) {
-        const task = document.createElement('div');
-        task.setAttribute("draggable", "true");
-        task.role = "button";
-        task.className = `animate-added-card border-l-4 ${item.priority == "P3" ? "border-lime-500" : (item.priority == "P2" ? "border-yellow-500" : "border-red-500")} shadow bg-white px-3 pt-2 pb-4 flex justify-between items-center mb-4 hover:bg-slate-200 transition-colors`;
+        addTaskToList(monthNames, currentDate, item);
 
-        let datetime = item.dueDate.split("T");
-
-        dateParts = datetime[0].split("-");
-
-        let selectedDueDate = new Date(item.dueDate);
-
-        let differenceInMs = selectedDueDate.getTime() - currentDate.getTime();
-
-        let dateStr;
-
-        if (differenceInMs < 86400000) {        // 1000 (ms) * 60 (s) * 60 (min) * 24 (h)
-            dateStr = `Today - ${datetime[1]}`;
-        } else if (differenceInMs < 172800000) {        // 1000 (ms) * 60 (s) * 60 (min) * 24 (h) * 2
-            dateStr = `Tomorrow - ${datetime[1]}`;
-        } else {
-            dateStr = `${dateParts[2]} ${monthNames[+dateParts[1] - 1]} ${dateParts[0]} - ${datetime[1]}`;
-        }
-
-        task.dataset.datetime = item.dueDate;
-
-        task.innerHTML = 
-        `<div class="w-11/12">
-            <h3 class="mb-1 font-semibold">${item.title}</h3>
-            <p class="pe-3 text-ellipsis overflow-hidden text-nowrap text-gray-500 mb-2">${item.description}</p>
-            <div class="flex">
-                <span class="${item.priority == "P3" ? "bg-lime-500" : (item.priority == "P2" ? "bg-yellow-500" : "bg-red-500")} text-gray-100 text-xs font-medium me-2 px-4 py-1 rounded-md task-priority">${item.priority}</span>
-                <span class="${dateStr.startsWith("Today") || dateStr.startsWith("Tomorrow") ? "bg-red-200 border-red-300" : "bg-gray-50"} text-dark-500 border text-xs font-medium me-2 px-4 py-1 rounded-md inline-flex task-due-date">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="15" height="15" class="me-2 inline-block"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
-                        <path d="M128 0c13.3 0 24 10.7 24 24l0 40 144 0 0-40c0-13.3 10.7-24 24-24s24 10.7 24 24l0 40 40 0c35.3 0 64 28.7 64 64l0 16 0 48 0 256c0 35.3-28.7 64-64 64L64 512c-35.3 0-64-28.7-64-64L0 192l0-48 0-16C0 92.7 28.7 64 64 64l40 0 0-40c0-13.3 10.7-24 24-24zM400 192L48 192l0 256c0 8.8 7.2 16 16 16l320 0c8.8 0 16-7.2 16-16l0-256zM329 297L217 409c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47 95-95c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"></path>
-                    </svg>
-                    <span class="task-duedate">${dateStr}</span>
-                </span>
-            </div>
-        </div>
-        <button role="button" class="ms-auto delete-task">
-            <svg width="17" height="17" class="fill-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M135.2 17.7C140.6 6.8 151.7 0 163.8 0L284.2 0c12.1 0 23.2 6.8 28.6 17.7L320 32l96 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 96C14.3 96 0 81.7 0 64S14.3 32 32 32l96 0 7.2-14.3zM32 128l384 0 0 320c0 35.3-28.7 64-64 64L96 512c-35.3 0-64-28.7-64-64l0-320zm96 64c-8.8 0-16 7.2-16 16l0 224c0 8.8 7.2 16 16 16s16-7.2 16-16l0-224c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16l0 224c0 8.8 7.2 16 16 16s16-7.2 16-16l0-224c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16l0 224c0 8.8 7.2 16 16 16s16-7.2 16-16l0-224c0-8.8-7.2-16-16-16z"/></svg>
-        </button>`;
-
-        task.querySelector(".delete-task").addEventListener("click", function () {
-            let target = this;
-            showConfirmModal(target);
-        });
-
-        task.addEventListener('click', openModifyModal);
-
-        dragTasks(task);
-
-        if (item.list == "ToDo") {
-            attachTaskToList(todoListBody, task);
-        } else if (item.list == "Doing") {
-            attachTaskToList(doingListBody, task);
-        } else {
-            attachTaskToList(doneListBody, task);
-        }
+        // Add to local Storage
+        localStorage.setItem("todo", `${localStorage.getItem("todo")}${item.id}||${item.title}||${item.description}||${item.priority}||${item.dueDate}||${item.list}-;-`);
 
         showSuccessMessage(1, `${addTasksArray.length} Task(s) Added successfully`);
-
-        setTimeout(() => {
-            task.classList.remove("animate-added-card");
-        }, 750);
 
         updateStatistiques();
     }
@@ -373,16 +347,84 @@ function attachTaskToList(list, task) {
     }
 }
 
+function addTaskToList(monthNames, currentDate, item) {
+    const task = document.createElement('div');
+    task.setAttribute("draggable", "true");
+    task.role = "button";
+    task.className = `animate-added-card border-l-4 ${item.priority == "Low" ? "border-lime-500" : (item.priority == "Medium" ? "border-yellow-500" : "border-red-500")} shadow bg-white px-3 pt-2 pb-4 flex justify-between items-center mb-4 hover:bg-slate-200 transition-colors`;
+
+    let datetime = item.dueDate.split("T");
+
+    dateParts = datetime[0].split("-");
+
+    let selectedDueDate = new Date(item.dueDate);
+
+    task.dataset.id = item.id;
+
+    let differenceInMs = selectedDueDate.getTime() - currentDate.getTime();
+
+    let dateStr;
+
+    if (differenceInMs < 86400000) {        // 1000 (ms) * 60 (s) * 60 (min) * 24 (h)
+        dateStr = `Today - ${datetime[1]}`;
+    } else if (differenceInMs < 172800000) {        // 1000 (ms) * 60 (s) * 60 (min) * 24 (h) * 2
+        dateStr = `Tomorrow - ${datetime[1]}`;
+    } else {
+        dateStr = `${dateParts[2]} ${monthNames[+dateParts[1] - 1]} ${dateParts[0]} - ${datetime[1]}`;
+    }
+
+    task.dataset.datetime = item.dueDate;
+
+    task.innerHTML = 
+    `<div class="w-11/12">
+        <h3 class="mb-1 font-semibold">${item.title}</h3>
+        <p class="pe-3 text-ellipsis overflow-hidden text-nowrap text-gray-500 mb-2">${item.description}</p>
+        <div class="flex">
+            <span class="${item.priority == "Low" ? "bg-lime-500" : (item.priority == "Medium" ? "bg-yellow-500" : "bg-red-500")} text-gray-100 text-xs font-medium me-2 px-4 py-1 rounded-md task-priority">${item.priority}</span>
+            <span class="${dateStr.startsWith("Today") || dateStr.startsWith("Tomorrow") ? "bg-red-200 border-red-300" : "bg-gray-50"} text-dark-500 border text-xs font-medium me-2 px-4 py-1 rounded-md inline-flex task-due-date">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="15" height="15" class="me-2 inline-block"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
+                    <path d="M128 0c13.3 0 24 10.7 24 24l0 40 144 0 0-40c0-13.3 10.7-24 24-24s24 10.7 24 24l0 40 40 0c35.3 0 64 28.7 64 64l0 16 0 48 0 256c0 35.3-28.7 64-64 64L64 512c-35.3 0-64-28.7-64-64L0 192l0-48 0-16C0 92.7 28.7 64 64 64l40 0 0-40c0-13.3 10.7-24 24-24zM400 192L48 192l0 256c0 8.8 7.2 16 16 16l320 0c8.8 0 16-7.2 16-16l0-256zM329 297L217 409c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47 95-95c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"></path>
+                </svg>
+                <span class="task-duedate">${dateStr}</span>
+            </span>
+        </div>
+    </div>
+    <button role="button" class="ms-auto delete-task">
+        <svg width="17" height="17" class="fill-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.--><path d="M135.2 17.7C140.6 6.8 151.7 0 163.8 0L284.2 0c12.1 0 23.2 6.8 28.6 17.7L320 32l96 0c17.7 0 32 14.3 32 32s-14.3 32-32 32L32 96C14.3 96 0 81.7 0 64S14.3 32 32 32l96 0 7.2-14.3zM32 128l384 0 0 320c0 35.3-28.7 64-64 64L96 512c-35.3 0-64-28.7-64-64l0-320zm96 64c-8.8 0-16 7.2-16 16l0 224c0 8.8 7.2 16 16 16s16-7.2 16-16l0-224c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16l0 224c0 8.8 7.2 16 16 16s16-7.2 16-16l0-224c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16l0 224c0 8.8 7.2 16 16 16s16-7.2 16-16l0-224c0-8.8-7.2-16-16-16z"/></svg>
+    </button>`;
+
+    task.querySelector(".delete-task").addEventListener("click", function () {
+        let target = this;
+        showConfirmModal(target);
+    });
+
+    task.addEventListener('click', openModifyModal);
+
+    dragTasks(task);
+
+    if (item.list == "ToDo") {
+        attachTaskToList(todoListBody, task);
+    } else if (item.list == "Doing") {
+        attachTaskToList(doingListBody, task);
+    } else {
+        attachTaskToList(doneListBody, task);
+    }
+
+    setTimeout(() => {
+        task.classList.remove("animate-added-card");
+    }, 750);
+}
+
 //////////////////////////////////////
 /// Delete Task
 //////////////////////////////////////
 
 
-document.querySelectorAll('.delete-task').forEach((item) => {
-    item.addEventListener('click', function() {
-        showConfirmModal(item);
-    });
-});
+// document.querySelectorAll('.delete-task').forEach((item) => {
+//     item.addEventListener('click', function() {
+//         showConfirmModal(item);
+//     });
+// });
 
 function showConfirmModal(target) {
     const div = document.createElement('div');
@@ -419,6 +461,15 @@ function showConfirmModal(target) {
         // target.parentElement.remove();
         showSuccessMessage(2, `Task "${target.parentElement.querySelector('h3').textContent.trim()}" has been deleted`);
         target.parentElement.classList.add("animate-deleted-card");
+
+
+        // Remove from localStorage
+        let localStorageContent = localStorage.getItem("todo");
+
+        if (localStorageContent) {
+            localStorage.setItem("todo", localStorageContent.replace(new RegExp(`${target.parentElement.dataset.id}.+?-;-`), ''));
+        }
+
         setTimeout(() => {
             target.parentElement.remove();
 
@@ -434,7 +485,7 @@ function closeConfirmModal(e, el) {
         el.remove();
         window.addEventListener('click', function() {
             closeConfirmModal(e, div);
-        })
+        });
     }
 }
 
@@ -651,10 +702,10 @@ function applyModifications() {
     modifyTask.classList.remove('border-red-500');
     modifyTask.classList.remove('border-lime-500');
     modifyTask.classList.remove('border-yellow-500');
-    if (modifyPriority.value == "P3") {
+    if (modifyPriority.value == "Low") {
         priority.classList.add('bg-lime-500');
         modifyTask.classList.add("border-lime-500");
-    } else if (modifyPriority.value == "P2") {
+    } else if (modifyPriority.value == "Medium") {
         priority.classList.add('bg-yellow-500');
         modifyTask.classList.add("border-yellow-500");
     } else {
@@ -670,6 +721,14 @@ function applyModifications() {
         changeTaskStatus(doingListBody, modifyTask);
     } else {
         changeTaskStatus(doneListBody, modifyTask);
+    }
+
+    // Update localStorage
+    let localStorageContent = localStorage.getItem("todo");
+
+    if (localStorageContent) {
+        let newValue = `${modifyTask.dataset.id}||${modifyTaskTitle.value}||${modifyTaskDescription.value}||${modifyPriority.value}||${modifyDueDate.value}||${modifyToList.value}-;-`;
+        localStorage.setItem("todo", localStorageContent.replace(new RegExp(`${modifyTask.dataset.id}.+?-;-`), newValue));
     }
  
     // Hide Modal
@@ -723,33 +782,7 @@ doneListBody.addEventListener("dragleave", function (e) {
 });
 
 doneListBody.addEventListener("drop", function (e) {
-    doneListBody.classList.remove("border", "border-blue-500");
-    doneListBody.classList.add("border-gray-300");
-    showSuccessMessage(3, `Task "${draggedItem.querySelector('h3').textContent.trim()}" moved to "Done"`);
-    if (doneListBody.firstElementChild.tagName != "DIV") {
-        doneListBody.innerHTML = "";
-        draggedItem.classList.add("animate-dragged-card");
-        draggedItem.classList.remove("animate-dropped-card");
-        setTimeout(() => {
-            doneListBody.append(draggedItem);
-            draggedItem.classList.remove("animate-dragged-card");
-            draggedItem.classList.add("animate-dropped-card");
-            updateStatistiques();
-        }, 500);
-    } else {
-        draggedItem.classList.add("animate-dragged-card");
-        draggedItem.classList.remove("animate-dropped-card");
-        setTimeout(() => {
-            doneListBody.firstElementChild.before(draggedItem);
-            draggedItem.classList.remove("animate-dragged-card");
-            draggedItem.classList.add("animate-dropped-card");
-            updateStatistiques();
-        }, 500);
-    }
-    setTimeout(() => {
-        draggedItem.classList.remove("animate-dropped-card");
-        draggedItem = null;
-    }, 1000)
+    dropTaskInList(e, doneListBody, "Done");
 });
 
 
@@ -767,33 +800,7 @@ doingListBody.addEventListener("dragleave", function (e) {
 });
 
 doingListBody.addEventListener("drop", function (e) {
-    doingListBody.classList.remove("border", "border-blue-500");
-    doingListBody.classList.add("border-gray-300");
-    showSuccessMessage(3, `Task "${draggedItem.querySelector('h3').textContent.trim()}" moved to "Doing"`);
-    if (doingListBody.firstElementChild.tagName != "DIV") {
-        doingListBody.innerHTML = "";
-        draggedItem.classList.add("animate-dragged-card");
-        draggedItem.classList.remove("animate-dropped-card");
-        setTimeout(() => {
-            doingListBody.append(draggedItem);
-            draggedItem.classList.remove("animate-dragged-card");
-            draggedItem.classList.add("animate-dropped-card");
-            updateStatistiques();
-        }, 500);
-    } else {
-        draggedItem.classList.add("animate-dragged-card");
-        draggedItem.classList.remove("animate-dropped-card");
-        setTimeout(() => {
-            doingListBody.firstElementChild.before(draggedItem);
-            draggedItem.classList.remove("animate-dragged-card");
-            draggedItem.classList.add("animate-dropped-card");
-            updateStatistiques();
-        }, 500);
-    }
-    setTimeout(() => {
-        draggedItem.classList.remove("animate-dropped-card");
-        draggedItem = null;
-    }, 1000)
+    dropTaskInList(e, doingListBody, "Doing");
 });
 
 // Drag and Drop: To Do List
@@ -810,16 +817,31 @@ todoListBody.addEventListener("dragleave", function (e) {
 });
 
 todoListBody.addEventListener("drop", function (e) {
-    todoListBody.classList.remove("border", "border-blue-500");
-    todoListBody.classList.add("border-gray-300");
-    showSuccessMessage(3, `Task "${draggedItem.querySelector('h3').textContent.trim()}" moved to "To Do"`);
-    if (todoListBody.firstElementChild.tagName != "DIV") {
-        todoListBody.innerHTML = "";
+    dropTaskInList(e, todoListBody, "ToDo");
+});
 
+function dropTaskInList(e, list, listName) {
+    list.classList.remove("border", "border-blue-500");
+    list.classList.add("border-gray-300");
+    showSuccessMessage(3, `Task "${draggedItem.querySelector('h3').textContent.trim()}" moved to "Done"`);
+
+    // Update localStorage
+    let localStorageContent = localStorage.getItem("todo");
+
+    if (localStorageContent) {
+        let newValue = `${draggedItem.dataset.id}||${draggedItem.querySelector('h3').textContent}||${draggedItem.querySelector('p').textContent}||${draggedItem.querySelector('.task-priority').textContent}||${draggedItem.dataset.datetime}||${listName}-;-`;
+        console.log(newValue)
+        console.log(localStorage)
+        localStorage.setItem("todo", localStorageContent.replace(new RegExp(`${draggedItem.dataset.id}.+?-;-`), newValue));
+    }
+    
+    if (list.firstElementChild.tagName != "DIV") {
+        list.innerHTML = "";
         draggedItem.classList.add("animate-dragged-card");
         draggedItem.classList.remove("animate-dropped-card");
+
         setTimeout(() => {
-            todoListBody.append(draggedItem);
+            list.append(draggedItem);
             draggedItem.classList.remove("animate-dragged-card");
             draggedItem.classList.add("animate-dropped-card");
             updateStatistiques();
@@ -828,7 +850,7 @@ todoListBody.addEventListener("drop", function (e) {
         draggedItem.classList.add("animate-dragged-card");
         draggedItem.classList.remove("animate-dropped-card");
         setTimeout(() => {
-            todoListBody.firstElementChild.before(draggedItem);
+            list.firstElementChild.before(draggedItem);
             draggedItem.classList.remove("animate-dragged-card");
             draggedItem.classList.add("animate-dropped-card");
             updateStatistiques();
@@ -838,7 +860,7 @@ todoListBody.addEventListener("drop", function (e) {
         draggedItem.classList.remove("animate-dropped-card");
         draggedItem = null;
     }, 1000)
-});
+}
 
 ////////////////////////////////////////
 /// Update Statistics
