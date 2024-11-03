@@ -8,6 +8,7 @@ const doneListBody = document.querySelector('.done-list-body');
 const todoTotalTasks = document.querySelector('#todo-total-tasks');
 const doingTotalTasks = document.querySelector('#doing-total-tasks');
 const doneTotalTasks = document.querySelector('#done-total-tasks');
+const listOptions = document.querySelectorAll('.list-options');
 
 // Add Task
 
@@ -44,6 +45,91 @@ const filterClearBtn = document.querySelector("#filter-clear");
 const addTasksArray = [];
 
 updateStatistiques();
+
+listOptions.forEach(function (item) {
+    item.addEventListener("click", function (e) {
+        if (!this.nextElementSibling) {
+            e.stopPropagation();
+            let optionsContainer = document.createElement('div');
+            optionsContainer.className = "options-container absolute right-0 top-9 w-36 bg-white shadow-lg text-gray-500 px-4 py-3 rounded-lg border border-gray-400 font-semibold *:py-1 flex flex-col *:transition-colors";
+            optionsContainer.innerHTML = 
+                `<button type="button" class="z-10 clear-option hover:text-gray-900">Clear List</button>`;
+            this.parentElement.append(optionsContainer);
+
+            optionsContainer.querySelector('.clear-option').addEventListener('click', function () {
+                clearAllTasks(item.parentElement.firstElementChild.firstElementChild.textContent.trim(), item.parentElement.nextElementSibling);
+                item.nextElementSibling.remove();
+            });
+
+            function removeListOptions(e) {
+                if (item.nextElementSibling && !optionsContainer.contains(e.target) && !e.target) {
+                    item.nextElementSibling.remove();
+                    document.removeEventListener('click', removeListOptions);
+                }
+            }
+    
+            document.addEventListener('click', removeListOptions);
+        }
+    });
+    // item.addEventListener("blur", function (e) {
+    //     if (this.nextElementSibling) {
+    //         this.nextElementSibling.remove();
+    //     }
+    // });
+});
+
+// Remove list options
+
+function clearAllTasks(listName, list) {
+    const div = document.createElement('div');
+    div.id = "confirm-delete-modal";
+    div.className = "z-20 px-3 flex w-full h-screen fixed top-0 left-0 bg-opacity-60 bg-gray-900 justify-center items-center";
+    div.innerHTML = `
+    <div class="bg-white rounded-xl w-full max-w-xl h-72 shadow-lg border border-gray-500 flex flex-col justify-between">
+      
+      <div class="h-16 flex items-center px-7 justify-between border-b border-gray-300">
+        <h2 class="font-semibold text-lg">Confirm delete</h2>
+        <button role="button" class="font-bold text-lg text-red-500" id="close-confirm-delete-modal">X</button>
+      </div>
+
+      <div class="py-4 px-10">
+        <p>Do you really want to delete all tasks in "${listName}" list?</p>
+      </div>
+      
+      <div class="h-16 flex items-start px-7">
+        <button role="button" class="px-5 py-2 rounded bg-red-600 text-gray-50" id="confirm-delete-btn">Confirm</button>
+      </div>
+
+    </div>`;
+
+    document.body.append(div);
+
+    document.onclick = function (e) {
+        if (e.target == div) {
+            div.remove();
+            document.onclick = null;
+        }
+    }
+
+    div.querySelector('#close-confirm-delete-modal').addEventListener('click', function () {
+        div.remove();
+        document.onclick = null;
+    });
+    div.querySelector("#confirm-delete-btn").addEventListener('click', function () {
+        // target.parentElement.remove();
+        showSuccessMessage(2, `All tasks in "${listName}" list have been deleted`);
+        for (let item of list.children) {
+            item.classList.add("animate-deleted-card");
+            setTimeout(() => {
+                item.remove();
+    
+                updateStatistiques();
+            }, 750);
+        }
+        div.remove();
+        document.onclick = null;
+    });
+}
 
 ////////////////////////////////////////
 /// Add Tasks
@@ -298,9 +384,9 @@ document.querySelectorAll('.delete-task').forEach((item) => {
 function showConfirmModal(target) {
     const div = document.createElement('div');
     div.id = "confirm-delete-modal";
-    div.className = "flex w-full h-screen fixed top-0 left-0 bg-opacity-60 bg-gray-900 justify-center items-center";
+    div.className = "flex w-full px-3 h-screen fixed top-0 left-0 bg-opacity-60 bg-gray-900 justify-center items-center";
     div.innerHTML = `
-    <div class="bg-white rounded-xl w-2/5 h-72 shadow-lg border border-gray-500 flex flex-col justify-between">
+    <div class="bg-white rounded-xl w-full max-w-xl h-72 shadow-lg border border-gray-500 flex flex-col justify-between">
       
       <div class="h-16 flex items-center px-7 justify-between border-b border-gray-300">
         <h2 class="font-semibold text-lg">Confirm delete</h2>

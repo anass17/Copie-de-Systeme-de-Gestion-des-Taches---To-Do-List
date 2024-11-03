@@ -55,9 +55,9 @@
     <!-- To Do List  -->
 
     <div class="border border-gray-300 rounded-lg shadow-md w-full">
-      <div class="flex justify-between h-12 font-bold text-gray-100 bg-gradient-to-tr from-blue-700 to-blue-500 items-center px-5 rounded-t-lg">
+      <div class="flex justify-between relative h-12 font-bold text-gray-100 bg-gradient-to-tr from-blue-700 to-blue-500 items-center px-5 rounded-t-lg">
         <h2><span class="pr-5 border-r border-gray-300 mr-4">To Do</span> <span id="todo-total-tasks" class="tasks-total">1</span></h2>
-        <button role="button">...</button>
+        <button role="button" class="relative bottom-1 tracking-widest list-options">...</button>    
       </div>
 
       <!-- List Body -->
@@ -120,9 +120,9 @@
     <!-- Doing List -->
 
     <div class="border border-gray-300 rounded-lg shadow-md w-full">
-      <div class="flex justify-between h-12 font-bold text-gray-100 bg-gradient-to-tr from-green-700 to-green-500 items-center px-5 rounded-t-lg">
+      <div class="flex justify-between relative h-12 font-bold text-gray-100 bg-gradient-to-tr from-green-700 to-green-500 items-center px-5 rounded-t-lg">
         <h2><span class="pr-5 border-r border-gray-300 mr-4">Doing</span> <span id="doing-total-tasks" class="tasks-total">3</span></h2>
-        <button role="button">...</button>
+        <button role="button" class="relative bottom-1 tracking-widest list-options">...</button>
       </div>
 
       <!-- List Body -->
@@ -225,9 +225,9 @@
     <!-- Done List -->
 
     <div class="border border-gray-300 rounded-lg shadow-md w-full">
-      <div class="flex justify-between h-12 font-bold text-gray-100 bg-gradient-to-tr from-orange-700 to-orange-500 items-center px-5 rounded-t-lg">
+      <div class="flex justify-between relative h-12 font-bold text-gray-100 bg-gradient-to-tr from-orange-700 to-orange-500 items-center px-5 rounded-t-lg">
         <h2><span class="pr-5 border-r border-gray-300 mr-4">Done</span> <span id="done-total-tasks" class="tasks-total">0</span></h2>
-        <button role="button">...</button>
+        <button role="button" class="relative bottom-1 tracking-widest list-options">...</button>
       </div>
 
       <!-- List Body -->
@@ -256,8 +256,8 @@
 
   <!-- Modal: Add Tasks -->
 
-  <div id="tasks-adding-modal" class="hidden bg w-full h-screen fixed top-0 left-0 bg-opacity-60 bg-gray-900 justify-center items-center">
-    <div class="bg-white rounded-xl w-2/5 h-5/6 shadow-lg border border-gray-500 flex flex-col justify-between">
+  <div id="tasks-adding-modal" class="hidden bg w-full px-3 h-screen fixed top-0 left-0 bg-opacity-60 bg-gray-900 justify-center items-center">
+    <div class="bg-white rounded-xl w-full max-w-xl h-5/6 shadow-lg border border-gray-500 flex flex-col justify-between">
     
       <!-- Modal Header -->
       
@@ -268,7 +268,7 @@
       
       <!-- Modal body -->
 
-      <div class="py-4 px-10">
+      <div class="py-4 px-7 md:px-10">
         <div id="add-tasks-preview-list" class="flex justify-center gap-3 relative pb-6 pt-2 after:bottom-0 after:h-px after:w-40 after:bg-gray-300 after:absolute after::bottom-0 after:left-1/2 after:-translate-x-1/2">
           <button role="button" class="w-14 pb-0.5 rounded text-gray-800 border-2 border-gray-400 text-lg disabled:opacity-40 disabled:bg-gray-200 disabled:cursor-not-allowed" id="add-another-task-btn">+</button>
         </div>
@@ -322,8 +322,8 @@
 
   <!-- Modal: Modify Tasks -->
 
-  <div id="tasks-modifying-modal" class="hidden bg w-full h-screen fixed top-0 left-0 bg-opacity-60 bg-gray-900 justify-center items-center">
-    <div class="bg-white rounded-xl w-2/5 h-5/6 shadow-lg border border-gray-500 flex flex-col justify-between">
+  <div id="tasks-modifying-modal" class="hidden bg w-full px-3 h-screen fixed top-0 left-0 bg-opacity-60 bg-gray-900 justify-center items-center">
+    <div class="bg-white rounded-xl w-full max-w-xl h-5/6 shadow-lg border border-gray-500 flex flex-col justify-between">
     
       <!-- Modal Header -->
       
@@ -334,7 +334,7 @@
       
       <!-- Modal body -->
 
-      <div class="py-4 px-10">
+      <div class="py-4 px-7 md:px-10">
         <form action="">
           <div>
             <label for="modify-task-title" class="sr-only">Task Title</label>
