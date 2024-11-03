@@ -71,11 +71,6 @@ listOptions.forEach(function (item) {
             document.addEventListener('click', removeListOptions);
         }
     });
-    // item.addEventListener("blur", function (e) {
-    //     if (this.nextElementSibling) {
-    //         this.nextElementSibling.remove();
-    //     }
-    // });
 });
 
 // Remove list options
@@ -163,10 +158,14 @@ function clearData() {
     }
     addAnotherTaskBtn.removeAttribute('disabled');
     addTaskTitle.value = "";
+    addTaskTitle.classList.remove("placeholder:text-red-500");
     addTaskDescription.value = "";
     addPriority.value = "Select";
+    addPriority.style.borderColor = "";
     addDueDate.value = "";
+    addDueDate.style.borderColor = "";
     addToList.value = "Select";
+    addToList.style.borderColor = "";
 }
 
 function closeModalOutside(e) {
@@ -517,6 +516,8 @@ function checkTaskFilter(task) {
 
 let modifyTask = null;
 
+// Apply event to all tasks
+
 for (let item of todoListBody.children) {
     item.addEventListener('click', openModifyModal);
 }
@@ -527,9 +528,86 @@ for (let item of doneListBody.children) {
     item.addEventListener('click', openModifyModal);
 }
 
-saveModifyBtn.addEventListener("click", function () {
+// Change Task Status
+
+function changeTaskStatus(listBody, modifyTask) {
+    if (listBody.firstElementChild.tagName != "DIV") {
+        listBody.innerHTML = "";
+        listBody.append(modifyTask);
+    } else {
+        listBody.firstElementChild.before(modifyTask);
+    }
+    updateStatistiques();
+}
+
+// Function to open Modify Button
+
+function openModifyModal(e) {
+    const button = this.querySelector('button');
+
+    if (button && (e.target === button || button.contains(e.target))) {
+        return;
+    }
+
+    taskModifyingModal.classList.remove("hidden");
+    taskModifyingModal.classList.add("flex");
+
+    modifyTaskTitle.value = this.querySelector("h3").textContent;
+    modifyTaskDescription.value = this.querySelector("p").textContent;
+    modifyPriority.value = this.querySelector(".task-priority").textContent;
+    modifyDueDate.value = this.dataset.datetime;
+    modifyToList.value = this.parentElement.dataset.list;
+
+    modifyTask = this;
+}
+
+// Close Modify Modal
+
+closeModifyModal.addEventListener('click', function () {
+    taskModifyingModal.classList.add('hidden');
+    taskModifyingModal.classList.add('flex');
+});
+
+// Add Click Event to save Button
+
+saveModifyBtn.addEventListener("click", applyModifications);
+
+// Validate and apply modifications
+
+function applyModifications() {
     const priority = modifyTask.querySelector(".task-priority");
 
+    let error = false;
+
+    if (modifyTaskTitle.value.trim() == "") {
+        modifyTaskTitle.classList.add("placeholder:text-red-500");
+        error = true;
+    } else {
+        modifyTaskTitle.classList.remove("placeholder:text-red-500");
+    }
+
+    if (modifyDueDate.value == "") {
+        modifyDueDate.style.borderColor = "red";
+        error = true;
+    } else {
+        let selectedDueDate = new Date(modifyDueDate.value);
+        let currentDate = new Date();
+
+        let differenceInMs = selectedDueDate.getTime() - currentDate.getTime();
+
+        if (differenceInMs <= 0) {
+            modifyDueDate.style.borderColor = "red";
+            error = true;
+        } else {
+            modifyDueDate.style.borderColor = "";
+        }
+    }
+        
+
+    if (error == true) {
+        return;
+    }
+    
     modifyTask.querySelector("h3").textContent = modifyTaskTitle.value;
     modifyTask.querySelector("p").textContent = modifyTaskDescription.value;
 
@@ -561,54 +639,17 @@ saveModifyBtn.addEventListener("click", function () {
     // Change List
 
     if (modifyToList.value == "ToDo") {
-        changeTaskList(todoListBody, modifyTask);
+        changeTaskStatus(todoListBody, modifyTask);
     } else if (modifyToList.value == "Doing") {
-        changeTaskList(doingListBody, modifyTask);
+        changeTaskStatus(doingListBody, modifyTask);
     } else {
-        changeTaskList(doneListBody, modifyTask);
+        changeTaskStatus(doneListBody, modifyTask);
     }
     // modifyToList.value = item.parentElement.dataset.list;
     modifyTask = null;
 
     showSuccessMessage(3, `Task "${modifyTaskTitle.value}" has been modified`);
-});
-
-function changeTaskList(listBody, modifyTask) {
-    if (listBody.firstElementChild.tagName != "DIV") {
-        listBody.innerHTML = "";
-        listBody.append(modifyTask);
-    } else {
-        listBody.firstElementChild.before(modifyTask);
-    }
-    updateStatistiques();
 }
-
-
-
-function openModifyModal(e) {
-    const button = this.querySelector('button');
-
-    // Check if the clicked element is the button or a child of the button
-    if (button && (e.target === button || button.contains(e.target))) {
-        return;
-    }
-
-    taskModifyingModal.classList.remove("hidden");
-    taskModifyingModal.classList.add("flex");
-
-    modifyTaskTitle.value = this.querySelector("h3").textContent;
-    modifyTaskDescription.value = this.querySelector("p").textContent;
-    modifyPriority.value = this.querySelector(".task-priority").textContent;
-    // modifyDueDate.value = ;
-    modifyToList.value = this.parentElement.dataset.list;
-
-    modifyTask = this;
-}
-
-closeModifyModal.addEventListener('click', function () {
-    taskModifyingModal.classList.add('hidden');
-    taskModifyingModal.classList.add('flex');
-});
 
 /////////////////////////////////////////////
 /// Drag and Drop
@@ -626,12 +667,12 @@ for (let item of todoListBody.children) {
 function dragTasks(item) {
     item.addEventListener("dragstart", function () {
         draggedItem = item;
-        item.classList.add("opacity-70", "border-2", "border-blue-500", "border-dashed", "blur-[1px]");
+        item.classList.add("animated-drag", "opacity-70", "border-2", "border-blue-500", "border-dashed", "blur-[1px]");
         item.classList.remove("hover:bg-slate-200", "border-l-4");
     });
     
     item.addEventListener("dragend", function (e) {
-        item.classList.remove("opacity-70", "border-2", "border-blue-500", "border-dashed", "blur-[1px]");
+        item.classList.remove("animated-drag", "opacity-70", "border-2", "border-blue-500", "border-dashed", "blur-[1px]");
         item.classList.add("hover:bg-slate-200", "border-l-4");
     });
 }
@@ -654,12 +695,26 @@ doneListBody.addEventListener("drop", function (e) {
     doneListBody.classList.add("border-gray-300");
     if (doneListBody.firstElementChild.tagName != "DIV") {
         doneListBody.innerHTML = "";
-        doneListBody.append(draggedItem);
+        draggedItem.classList.add("animate-dragged-card");
+        draggedItem.classList.remove("animate-dropped-card");
+        setTimeout(() => {
+            doneListBody.append(draggedItem);
+            draggedItem.classList.remove("animate-dragged-card");
+            draggedItem.classList.add("animate-dropped-card");
+            updateStatistiques();
+            draggedItem = null;
+        }, 500);
     } else {
-        doneListBody.firstElementChild.before(draggedItem);
+        draggedItem.classList.add("animate-dragged-card");
+        draggedItem.classList.remove("animate-dropped-card");
+        setTimeout(() => {
+            doneListBody.firstElementChild.before(draggedItem);
+            draggedItem.classList.remove("animate-dragged-card");
+            draggedItem.classList.add("animate-dropped-card");
+            updateStatistiques();
+            draggedItem = null;
+        }, 500);
     }
-    updateStatistiques();
-    draggedItem = null;
 });
 
 
@@ -681,12 +736,26 @@ doingListBody.addEventListener("drop", function (e) {
     doingListBody.classList.add("border-gray-300");
     if (doingListBody.firstElementChild.tagName != "DIV") {
         doingListBody.innerHTML = "";
-        doingListBody.append(draggedItem);
+        draggedItem.classList.add("animate-dragged-card");
+        draggedItem.classList.remove("animate-dropped-card");
+        setTimeout(() => {
+            doingListBody.append(draggedItem);
+            draggedItem.classList.remove("animate-dragged-card");
+            draggedItem.classList.add("animate-dropped-card");
+            updateStatistiques();
+            draggedItem = null;
+        }, 500);
     } else {
-        doingListBody.firstElementChild.before(draggedItem);
+        draggedItem.classList.add("animate-dragged-card");
+        draggedItem.classList.remove("animate-dropped-card");
+        setTimeout(() => {
+            doingListBody.firstElementChild.before(draggedItem);
+            draggedItem.classList.remove("animate-dragged-card");
+            draggedItem.classList.add("animate-dropped-card");
+            updateStatistiques();
+            draggedItem = null;
+        }, 500);
     }
-    updateStatistiques();
-    draggedItem = null;
 });
 
 // Drag and Drop: To Do List
@@ -707,12 +776,27 @@ todoListBody.addEventListener("drop", function (e) {
     todoListBody.classList.add("border-gray-300");
     if (todoListBody.firstElementChild.tagName != "DIV") {
         todoListBody.innerHTML = "";
-        todoListBody.append(draggedItem);
+
+        draggedItem.classList.add("animate-dragged-card");
+        draggedItem.classList.remove("animate-dropped-card");
+        setTimeout(() => {
+            todoListBody.append(draggedItem);
+            draggedItem.classList.remove("animate-dragged-card");
+            draggedItem.classList.add("animate-dropped-card");
+            updateStatistiques();
+            draggedItem = null;
+        }, 500);
     } else {
-        todoListBody.firstElementChild.before(draggedItem);
+        draggedItem.classList.add("animate-dragged-card");
+        draggedItem.classList.remove("animate-dropped-card");
+        setTimeout(() => {
+            todoListBody.firstElementChild.before(draggedItem);
+            draggedItem.classList.remove("animate-dragged-card");
+            draggedItem.classList.add("animate-dropped-card");
+            updateStatistiques();
+            draggedItem = null;
+        }, 500);
     }
-    updateStatistiques();
-    draggedItem = null;
 });
 
 ////////////////////////////////////////

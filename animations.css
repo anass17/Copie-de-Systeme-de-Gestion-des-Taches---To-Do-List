@@ -1,4 +1,5 @@
-.animate-deleted-card {
+.animate-deleted-card,
+.animate-dragged-card {
     transform: scale(0);
     max-height: 0;
     padding: 0 ;
@@ -6,14 +7,24 @@
     animation: deleteTask .5s .3s ease-in-out backwards;
 }
 
-.animate-added-card {
+.animate-added-card,
+.animate-dropped-card {
     transform: scale(1);
     max-height: 150px;
     animation: addTask .5s .3s ease-in-out backwards;
 }
 
+.animate-dragged-card,
+.animate-dropped-card {
+    animation-delay: 0s;
+}
+
 .animated-message {
     animation: successMessage 4.5s .3s ease-in-out backwards;
+}
+
+.animated-drag {
+    animation: drag 1.5s linear infinite;
 }
 
 @keyframes deleteTask {
@@ -65,5 +76,17 @@
     100% {
         transform: translate(-50%, -100%);
         opacity: 0;
+    }
+}
+
+@keyframes drag {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    25%{
+        transform: translateX(-5px);
+    }
+    75% {
+        transform: translateX(5px);
     }
 }
