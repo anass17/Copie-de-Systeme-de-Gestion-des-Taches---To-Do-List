@@ -1,5 +1,3 @@
-const addTaskBtn = document.querySelector('#add-task');
-
 // Lists
 
 const todoListBody = document.querySelector('.todo-list-body');
@@ -43,6 +41,10 @@ const searchBtn = document.querySelector('#search-btn');
 const filterClearBtn = document.querySelector("#filter-clear");
 
 const addTasksArray = [];
+
+///////////////////////////////////
+/// Clear All
+///////////////////////////////////
 
 listOptions.forEach(function (item) {
     item.addEventListener("click", function (e) {
@@ -124,8 +126,6 @@ function clearAllTasks(listName, list) {
     });
 }
 
-
-
 ////////////////////////////////////////
 /// Get data from localStorage
 ////////////////////////////////////////
@@ -161,12 +161,6 @@ updateStatistiques();
 ////////////////////////////////////////
 /// Add Tasks
 ////////////////////////////////////////
-
-addTaskBtn.addEventListener('click', function () {
-    taskAddingModal.classList.remove('hidden');
-    taskAddingModal.classList.add('flex');
-    window.addEventListener('click', closeModalOutside);
-});
 
 closeAddModalBtn.addEventListener('click', closeModalAdd);
 
@@ -381,7 +375,7 @@ function addTaskToList(monthNames, currentDate, item) {
         <p class="pe-3 text-ellipsis overflow-hidden text-nowrap text-gray-500 mb-2">${item.description}</p>
         <div class="flex">
             <span class="${item.priority == "Low" ? "bg-lime-500" : (item.priority == "Medium" ? "bg-yellow-500" : "bg-red-500")} text-gray-100 text-xs font-medium me-2 px-4 py-1 rounded-md task-priority">${item.priority}</span>
-            <span class="${dateStr.startsWith("Today") || dateStr.startsWith("Tomorrow") ? "bg-red-200 border-red-300" : "bg-gray-50"} text-dark-500 border text-xs font-medium me-2 px-4 py-1 rounded-md inline-flex task-due-date">
+            <span class="${dateStr.startsWith("Today") || dateStr.startsWith("Tomorrow") ? "bg-red-200 border-red-300" : "bg-gray-50"} text-dark-500 border text-xs font-medium me-2 px-4 py-1 rounded-md inline-flex task-due-date relative overflow-hidden">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" width="15" height="15" class="me-2 inline-block"><!--!Font Awesome Free 6.6.0 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2024 Fonticons, Inc.-->
                     <path d="M128 0c13.3 0 24 10.7 24 24l0 40 144 0 0-40c0-13.3 10.7-24 24-24s24 10.7 24 24l0 40 40 0c35.3 0 64 28.7 64 64l0 16 0 48 0 256c0 35.3-28.7 64-64 64L64 512c-35.3 0-64-28.7-64-64L0 192l0-48 0-16C0 92.7 28.7 64 64 64l40 0 0-40c0-13.3 10.7-24 24-24zM400 192L48 192l0 256c0 8.8 7.2 16 16 16l320 0c8.8 0 16-7.2 16-16l0-256zM329 297L217 409c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47 95-95c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z"></path>
                 </svg>
@@ -396,6 +390,45 @@ function addTaskToList(monthNames, currentDate, item) {
     task.querySelector(".delete-task").addEventListener("click", function () {
         let target = this;
         showConfirmModal(target);
+    });
+
+    task.querySelector('.task-due-date').addEventListener('mouseenter', function () {
+        let seconds = Math.floor((new Date(task.dataset.datetime).getTime() - new Date().getTime()) / 1000);
+
+        let div = document.createElement('div');
+
+        div.className = "w-full absolute top-0 left-0 bg-white text-center h-full flex items-center justify-center";
+
+        const days = Math.floor(seconds / 86400);
+        const hours = Math.floor((seconds % 86400) / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        const remainingSeconds = seconds % 60;
+
+        div.textContent = `${days}d ${hours}h ${minutes}m ${remainingSeconds}s`;
+
+        seconds--;
+
+        this.appendChild(div);
+
+        const countdown = setInterval(() => {
+            const days = Math.floor(seconds / 86400);
+            const hours = Math.floor((seconds % 86400) / 3600);
+            const minutes = Math.floor((seconds % 3600) / 60);
+            const remainingSeconds = seconds % 60;
+
+            div.textContent = `${days}d ${hours}h ${minutes}m ${remainingSeconds}s`;
+
+            if (seconds <= 0) {
+                clearInterval(countdown);
+            }
+
+            seconds--;
+        }, 1000);
+
+        task.querySelector('.task-due-date').onmouseleave = function () {
+            div.remove();
+            clearInterval(countdown)
+        }
     });
 
     task.addEventListener('click', openModifyModal);
@@ -926,3 +959,13 @@ function showSuccessMessage(icon, message) {
         msgEl.remove();
     }, 5000);
 }
+
+document.querySelectorAll('.add-task-btn').forEach(item => {
+    item.addEventListener('click', function () {
+        taskAddingModal.classList.add('flex');
+        taskAddingModal.classList.remove('hidden');
+
+        taskAddingModal.querySelector('#add-to-list').value = this.dataset.list;
+        window.addEventListener('click', closeModalOutside);
+    });
+});
