@@ -1,4 +1,4 @@
-# Copie-de-Systeme-de-Gestion-des-Taches---To-Do-List
+# Systeme-de-Gestion-des-Taches---To-Do-List
 
 A simple and interactive To-Do List application built with HTML, CSS, and JavaScript. This app allows users to add, remove, and check off tasks with smooth animations for an enhanced user experience.
 
